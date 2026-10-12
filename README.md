@@ -183,6 +183,10 @@ O relatório é uma página contínua em 7 seções, cada uma respondendo uma pe
 
 ## Autor
 
-**Matheus Mendes**: em transição para a área de dados, estudando Python, SQL, PostgreSQL, Power BI e IA.
+**Matheus Mendes** — Estudante de Análise e Desenvolvimento de Sistemas (ADS), com foco em **Dados, Engenharia de Dados e Business Intelligence**.
 
-[LinkedIn](COLOQUE_AQUI_O_LINK_DO_SEU_LINKEDIN)
+**Stack:** Python · SQL · MySQL · ETL · Data Warehouse · Power BI · DAX
+
+**Certificações:** CPA-10 · CPA Pro R — ANBIMA 
+
+[LinkedIn]((https://www.linkedin.com/in/matheusmendes-dados/) · [GitHub](https://github.com/matheusmendesgestaopessoal)
