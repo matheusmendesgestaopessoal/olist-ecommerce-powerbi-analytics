@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Protótipo · Olist · Página 2 · Detalhe do seller</title>
+<link rel="stylesheet" href="base.css">
+<style>body{height:1080px;overflow:hidden}.insight{padding:12px 16px}.insight p{font-size:15px;margin-top:4px}.vis{padding:18px 22px}.kpi{padding:16px 20px}.kpi .k-val{font-size:34px}td{padding:9px 14px}</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="marca">
+      <span style="display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;background:var(--azul-fundo);color:var(--azul-tinta);font-weight:600;font-size:14px"><span data-i="voltar"></span> Voltar ao diagnóstico</span>
+      <div style="margin-left:8px"><div class="s">Desempenho de sellers / Detalhe do seller</div><div class="t">Seller 4869f7 · São Paulo (SP) · 1.124 pedidos <span class="anot">ƒ título dinâmico</span></div></div>
+    </div>
+    <div class="s" style="font-size:13px;color:var(--grafite-2);text-align:right">Os filtros da página de diagnóstico<br>continuam valendo aqui</div>
+  </div>
+</header>
+
+<section style="padding-top:22px">
+  <div class="wrap grid" style="grid-template-columns:repeat(5,1fr)">
+    <div class="card kpi"><div class="k-lbl">Faturamento <span class="ico" data-i="receita"></span></div><div class="k-val">R$ 227 mil</div><div class="k-ctx">1º lugar entre 2.970 sellers</div></div>
+    <div class="card kpi"><div class="k-lbl">Ticket médio <span class="ico" data-i="ticket"></span></div><div class="k-val">R$ 202</div><div class="k-ctx">Rede: R$ 137 <span class="delta" style="background:var(--verde-fundo);color:var(--verde-escuro)">+47%</span></div></div>
+    <div class="card kpi"><div class="k-lbl">Nota ajustada <span class="ico" data-i="meta"></span></div><div class="k-val">4,13</div><div class="k-ctx">Rede: 4,16 <span class="delta ruim">−0,03</span></div></div>
+    <div class="card kpi"><div class="k-lbl">Pedidos atrasados <span class="ico" data-i="cancelamento" data-c="#FF3B3B" style="background:var(--vermelho-fundo)"></span></div><div class="k-val" style="color:var(--vermelho)">10,5%</div><div class="k-ctx">Rede: 6,7% <span class="delta ruim">+3,8 p.p.</span></div></div>
+    <div class="card kpi"><div class="k-lbl">Prazo médio <span class="ico" data-i="pedidos"></span></div><div class="k-val">15,1 dias</div><div class="k-ctx">Rede: 12,6 dias</div></div>
+  </div>
+
+  <div class="wrap grid" style="grid-template-columns:1.6fr 1fr;margin-top:16px">
+    <div class="card vis"><h3>Faturamento mensal do seller</h3><div class="sub">R$ mil · 2017 e 2018</div><div id="g-mes"></div></div>
+    <div class="card vis"><h3>Diagnóstico do seller</h3><div class="sub">Calculado pelos indicadores, comparados com a rede</div>
+      <div class="insight" style="--c:var(--azul);--c2:var(--azul-tinta);margin-top:4px"><div class="lbl">Perfil</div><p><b>Vende muito, nota na média:</b> 1º em faturamento, com ticket 47% acima da rede.</p></div>
+      <div class="insight" style="--c:var(--vermelho);--c2:#C41F1F;margin-top:10px"><div class="lbl">Ponto de atenção</div><p>Atraso de 10,5%, no grupo dos sellers que mais atrasam. É o que segura a nota.</p></div>
+      <div class="insight" style="--c:var(--verde);--c2:var(--verde-escuro);margin-top:10px"><div class="lbl">Ação recomendada</div><p>Plano de pontualidade antes de entrar no programa de sellers referência.</p></div>
+    </div>
+  </div>
+
+  <div class="wrap grid" style="grid-template-columns:1fr 1fr 1fr;margin-top:16px">
+    <div class="card vis"><h3>Faturamento por categoria</h3><div class="sub">R$ mil · 5 maiores</div><div id="g-cat"></div></div>
+    <div class="card vis"><h3>Para onde vende</h3><div class="sub">Pedidos por estado do cliente · 6 maiores</div><div id="g-uf"></div></div>
+    <div class="card vis"><h3>Nota por prazo de entrega</h3><div class="sub">Pedidos do seller · mesmo padrão da rede</div><div id="g-faixa"></div></div>
+  </div>
+</section>
+
+<script src="graficos.js"></script>
+<script src="dados.js"></script>
+<script>
+icones();
+const meses=["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+colunas(document.getElementById("g-mes"), {labels:D.ex_mensal.map(m=>meses[+m[0].slice(5)-1]), valores:D.ex_mensal.map(m=>m[1]), destaque:[], decimais:0, altura:232});
+const nomes={relogios_presentes:"Relógios e presentes",cool_stuff:"Cool stuff",audio:"Áudio",beleza_saude:"Beleza e saúde",eletronicos:"Eletrônicos"};
+barrasH(document.getElementById("g-cat"), {itens:D.ex_cat.map(c=>[nomes[c[0]]||c[0],c[1]]), altura:38, lw:150, decimais:1});
+barrasH(document.getElementById("g-uf"), {itens:D.ex_uf, altura:32, lw:50, decimais:0});
+barrasH(document.getElementById("g-faixa"), {itens:[["até 14 dias",4.46],["15–21 dias",4.29],["22+ dias",3.15]], altura:42, lw:110, decimais:2, cor:(v)=>v<3.5?"#FF3B3B":"#CFE0FF"});
+</script>
+</body>
+</html>

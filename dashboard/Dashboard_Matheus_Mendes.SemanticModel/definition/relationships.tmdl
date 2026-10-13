@@ -2,27 +2,15 @@ relationship 4a9a4137-c87c-8824-886c-1f182ccdb482
 	fromColumn: ft_vendas.order_purchase_date
 	toColumn: dm_data.date
 
-relationship 2ceac995-b441-6043-13ba-2b692c77652b
-	fromColumn: ft_avaliacoes_seller.order_purchase_date
-	toColumn: dm_data.date
-
-relationship ac868651-e612-726b-483b-d03e63bccb61
-	fromColumn: ft_avaliacoes_categoria.order_purchase_date
-	toColumn: dm_data.date
-
 relationship 8922487f-de76-ccb9-aeff-f57f4390e022
 	fromColumn: ft_vendas.seller_id
-	toColumn: dm_seller.seller_id
-
-relationship 0376f7d9-0f99-b63e-bb34-d9407c354893
-	fromColumn: ft_avaliacoes_seller.seller_id
 	toColumn: dm_seller.seller_id
 
 relationship fb3ff046-f44e-c6f9-044b-8d37ed3c7c10
 	fromColumn: ft_vendas.category_key
 	toColumn: dm_categoria.category_key
 
-relationship e628c4b1-5ee1-5214-12bc-e87941e7c470
-	fromColumn: ft_avaliacoes_categoria.category_key
-	toColumn: dm_categoria.category_key
+relationship 5d1c7a02-3b8e-4f61-9a0c-2e7f4b9d1c33
+	fromColumn: ft_vendas.customer_state
+	toColumn: dm_cliente_uf.uf
 

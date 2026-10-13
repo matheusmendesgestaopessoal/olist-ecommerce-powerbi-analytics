@@ -1,13 +1,15 @@
+/// Sellers. As colunas de atraso agrupam os sellers com 30+ avaliações em quatro grupos iguais
+/// pelo % de pedidos atrasados no período todo (classificação fixa, usada como eixo).
 table dm_seller
 	lineageTag: 3d2d84cc-622d-4f60-9f29-031fa52c107d
 
 	column seller_id
 		dataType: string
+		isHidden
+		isKey
 		lineageTag: 8a0b9c9e-7af9-4696-b171-ec620cc258e4
 		summarizeBy: none
 		sourceColumn: seller_id
-
-		annotation SummarizationSetBy = Automatic
 
 	column seller_city
 		dataType: string
@@ -15,21 +17,71 @@ table dm_seller
 		summarizeBy: none
 		sourceColumn: seller_city
 
-		annotation SummarizationSetBy = Automatic
-
 	column seller_state
 		dataType: string
 		lineageTag: d77c2583-563a-4eec-a3ee-63000e36b1d0
 		summarizeBy: none
 		sourceColumn: seller_state
 
-		annotation SummarizationSetBy = Automatic
-
 	column 'Seller Rótulo' = LEFT ( dm_seller[seller_id], 6 ) & " · " & dm_seller[seller_state]
 		lineageTag: 3cc1791a-1763-4697-834b-b9fbe7a3265f
 		summarizeBy: none
 
-		annotation SummarizationSetBy = Automatic
+	column Avaliações =
+			COUNTROWS (
+			    FILTER (
+			        CALCULATETABLE ( SUMMARIZE ( ft_vendas, ft_vendas[order_id], ft_vendas[nota_pedido] ) ),
+			        NOT ISBLANK ( ft_vendas[nota_pedido] )
+			    )
+			)
+		isHidden
+		formatString: 0
+		lineageTag: b87c265b-a54a-428e-9d1d-dc433fc6d596
+		summarizeBy: none
+
+	column 'Atraso Geral' =
+			VAR _p =
+			    FILTER (
+			        CALCULATETABLE ( SUMMARIZE ( ft_vendas, ft_vendas[order_id], ft_vendas[nota_pedido], ft_vendas[atrasado] ) ),
+			        NOT ISBLANK ( ft_vendas[nota_pedido] )
+			    )
+			RETURN DIVIDE ( COUNTROWS ( FILTER ( _p, ft_vendas[atrasado] = 1 ) ) + 0, COUNTROWS ( _p ) )
+		isHidden
+		formatString: 0.0%
+		lineageTag: fd582a2d-76e8-4fb1-a033-893a6b2754cd
+		summarizeBy: none
+
+	column 'Grupo Atraso Ordem' =
+			VAR _elegiveis = FILTER ( dm_seller, dm_seller[Avaliações] >= 30 )
+			VAR _n = COUNTROWS ( _elegiveis )
+			VAR _a = dm_seller[Atraso Geral]
+			VAR _id = dm_seller[seller_id]
+			VAR _posicao =
+			    COUNTROWS (
+			        FILTER ( _elegiveis, dm_seller[Atraso Geral] < _a || ( dm_seller[Atraso Geral] = _a && dm_seller[seller_id] <= _id ) )
+			    )
+			VAR _q = ( _n - 1 ) / 4
+			RETURN
+			    IF (
+			        dm_seller[Avaliações] >= 30,
+			        SWITCH ( TRUE (), _posicao <= 1 + _q, 1, _posicao <= 1 + 2 * _q, 2, _posicao <= 1 + 3 * _q, 3, 4 )
+			    )
+		isHidden
+		formatString: 0
+		lineageTag: 9f934181-d713-4073-b193-639c46769334
+		summarizeBy: none
+
+	column 'Grupo Atraso' =
+			VAR _g = dm_seller[Grupo Atraso Ordem]
+			VAR _media = AVERAGEX ( FILTER ( dm_seller, dm_seller[Grupo Atraso Ordem] = _g ), dm_seller[Atraso Geral] )
+			RETURN
+			    IF (
+			        NOT ISBLANK ( _g ),
+			        SWITCH ( _g, 1, "Menor atraso", 2, "2º grupo", 3, "3º grupo", 4, "Maior atraso" ) & " (" & FORMAT ( _media, "0.0%" ) & ")"
+			    )
+		lineageTag: 3a4d824e-6245-4f37-a923-69b323c5b8ce
+		summarizeBy: none
+		sortByColumn: 'Grupo Atraso Ordem'
 
 	partition dm_seller = m
 		mode: import

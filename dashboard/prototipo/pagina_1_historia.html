@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Protótipo · Olist · Página 1 · Diagnóstico</title>
+<link rel="stylesheet" href="base.css">
+<style>
+  .campeoes td,.campeoes th{padding:11px 14px}
+  .campeoes td b{display:block;font-size:15px}
+  .campeoes td small{color:var(--grafite-2);font-size:13px}
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .vs .card{padding:22px 24px}
+  .vs .n{font-size:58px;font-weight:800;letter-spacing:-.04em;line-height:1}
+  .quartil{display:grid;grid-template-columns:150px 1fr 70px;align-items:center;gap:12px;margin-top:14px;font-size:14px}
+  .quartil .b{height:22px;border-radius:6px;background:var(--azul-selecao);position:relative}
+  .quartil .b i{position:absolute;inset:0 auto 0 0;border-radius:6px}
+  .partes{display:flex;height:70px;border-radius:12px;overflow:hidden;margin-top:6px}
+  .partes div{display:flex;flex-direction:column;justify-content:center;padding:0 18px;color:#fff}
+  .partes b{font-size:24px}
+  .partes span{font-size:13px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="marca">
+      <div class="av">OL</div>
+      <div><div class="t">Olist · Desempenho de sellers e categorias</div><div class="s">Pedidos entregues · set/2016 a ago/2018 · análise de Matheus Mendes</div></div>
+    </div>
+    <div class="filtros">
+      <div class="filtro"><small>Ano</small><b>Todos <span>▾</span></b></div>
+      <div class="filtro"><small>Região do cliente</small><b>Todas <span>▾</span></b></div>
+      <div class="filtro"><small>Categoria</small><b>Todas <span>▾</span></b></div>
+      <span class="btn-limpar">Limpar filtros</span>
+    </div>
+  </div>
+</header>
+
+<!-- PERGUNTA + RESPOSTA -->
+<section style="padding-top:40px">
+  <div class="wrap grid" style="grid-template-columns:1.25fr 1fr;align-items:stretch">
+    <div class="card" style="padding:34px 38px">
+      <div class="lbl">Pergunta central</div>
+      <h1 style="font-size:48px;font-weight:700;letter-spacing:-.035em;line-height:1.12;margin-top:10px">Quem vende mais é quem o cliente <span class="sel">aprova</span>?</h1>
+      <p style="font-size:19px;line-height:1.55;color:var(--texto);margin-top:18px;max-width:820px">
+        <b>Resposta:</b> não. Faturamento e nota quase não se relacionam. O que decide a nota é a <b>entrega</b>:
+        pedido atrasado recebe <b>2,27</b>, contra <b>4,29</b> no prazo. <span class="anot">ƒ texto dinâmico (DAX)</span>
+      </p>
+    </div>
+    <div class="card vis" style="padding:28px 30px">
+      <h3>Nota média por prazo de entrega</h3>
+      <div class="sub">Dias entre a compra e a entrega · 95,8 mil pedidos avaliados</div>
+      <div id="g-faixas"></div>
+    </div>
+  </div>
+  <div class="wrap grid" style="grid-template-columns:repeat(5,1fr);margin-top:20px">
+    <div class="card kpi destaque"><div class="k-lbl">Faturamento <span class="ico" data-i="receita" data-c="#fff"></span></div><div class="k-val">R$ 13,22 Mi</div><div class="k-ctx">por mês, 2017→2018 <span class="delta" style="background:rgba(255,255,255,.2);color:#fff">+82%</span></div></div>
+    <div class="card kpi"><div class="k-lbl">Pedidos entregues <span class="ico" data-i="pedidos"></span></div><div class="k-val">96,5 mil</div><div class="k-ctx">Ticket médio R$ 137</div></div>
+    <div class="card kpi"><div class="k-lbl">Nota média <span class="ico" data-i="meta"></span></div><div class="k-val">4,16</div><div class="k-ctx">Notas 1 <span class="delta ruim">9,7%</span></div></div>
+    <div class="card kpi"><div class="k-lbl">Pedidos atrasados <span class="ico" data-i="cancelamento" data-c="#FF3B3B" style="background:var(--vermelho-fundo)"></span></div><div class="k-val" style="color:var(--vermelho)">6,7%</div><div class="k-ctx">Nota deles <span class="delta ruim">2,27</span></div></div>
+    <div class="card kpi"><div class="k-lbl">Sellers ativos <span class="ico" data-i="estoque"></span></div><div class="k-val">2.970</div><div class="k-ctx">10% maiores = <b style="color:var(--grafite)">67%</b> do faturamento</div></div>
+  </div>
+</section>
+
+<!-- 01 · CONTEXTO + CAMPEÕES -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><div>
+      <span class="lbl">01 · Contexto</span>
+      <h2>O marketplace cresceu 82% por mês, e os campeões mudam conforme a métrica <span class="anot">ƒ título dinâmico</span></h2>
+      <p>A pergunta original: quem lidera, por ano, em faturamento, volume e nota?</p>
+    </div></div>
+    <div class="grid" style="grid-template-columns:1.25fr 1fr">
+      <div class="card vis"><h3>Faturamento mensal</h3><div class="sub">R$ milhões · 2017 e 2018 (2016 tem só 4 meses)</div><div id="g-mensal"></div></div>
+      <div class="card vis"><h3>Categoria campeã por ano</h3><div class="sub">Nota = nota ajustada pelo número de avaliações</div>
+        <table class="campeoes" style="margin-top:6px"><thead><tr><th>Ano</th><th>Faturamento</th><th>Itens</th><th>Nota</th></tr></thead><tbody>
+          <tr><td><b>2017</b></td><td><b>Cama, mesa e banho</b><small>R$ 491 mil</small></td><td><b>Cama, mesa e banho</b><small>5.135 itens</small></td><td><b style="color:var(--verde-escuro)">Livros</b><small>4,50</small></td></tr>
+          <tr><td><b>2018</b></td><td><b>Beleza e saúde</b><small>R$ 756 mil</small></td><td><b>Beleza e saúde</b><small>5.841 itens</small></td><td><b style="color:var(--verde-escuro)">Livros</b><small>4,52</small></td></tr>
+        </tbody></table>
+        <div class="insight" style="--c:var(--amarelo);--c2:#8A6400;margin-top:16px"><div class="lbl">Repare</div><p>Quem fatura mais nunca é quem tem a melhor nota, nem nas categorias, nem nos sellers.</p></div>
+        <div style="font-size:13px;color:var(--grafite-2);margin-top:12px">Botões no Power BI trocam a visão: faturamento · itens · nota · categorias · sellers <span class="anot">parâmetro de campo</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 · QUEM VENDE MAIS ≠ QUEM O CLIENTE APROVA -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><div>
+      <span class="lbl">02 · Vender mais × vender melhor</span>
+      <h2>9 dos 20 sellers que mais faturam têm nota abaixo da média <span class="anot">ƒ título dinâmico</span></h2>
+      <p>Entre os 623 sellers com 30 ou mais avaliações, a correlação entre faturamento e nota é −0,08: praticamente nenhuma.</p>
+    </div><span class="badge media">Faturamento não prevê a nota</span></div>
+    <div class="grid" style="grid-template-columns:1.4fr 1fr">
+      <div class="card vis"><h3>Faturamento × nota dos sellers</h3><div class="sub">Cada ponto é um seller com 30+ avaliações · vermelho = atraso acima de 10% · passe o mouse para detalhar</div><div id="g-scatter"></div></div>
+      <div class="card vis"><h3>Os 10 maiores em faturamento</h3><div class="sub">R$ mil · nota média · % de pedidos atrasados</div>
+        <table><thead><tr><th>Seller</th><th class="num">Faturamento</th><th class="num">Nota</th><th class="num">Atraso</th></tr></thead><tbody id="t-top"></tbody></table>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:14px;padding:10px 14px;border-radius:10px;background:var(--azul-fundo);font-size:14px;color:var(--azul-tinta);font-weight:600">→ Botão direito num seller → <u>Detalhar seller</u> <span class="anot">drill-through</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · O QUE DECIDE A NOTA -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><div>
+      <span class="lbl">03 · O que decide a nota</span>
+      <h2>Atrasos são 6,7% dos pedidos, mas geram 37% de todas as notas 1 <span class="anot">ƒ título dinâmico</span></h2>
+      <p>O cliente avalia a experiência, não só o produto. Um atraso apaga a boa venda.</p>
+    </div><span class="badge alta">Prioridade alta · atraso</span></div>
+    <div class="grid" style="grid-template-columns:1fr 1fr">
+      <div class="vs">
+        <div class="card"><div class="lbl" style="color:var(--verde-escuro)">No prazo</div><div class="n" style="margin-top:10px">4,29</div><div style="font-size:15px;color:var(--grafite-2);margin-top:8px">nota média · 6,6% de notas 1</div></div>
+        <div class="card" style="border-color:#FFC9C9;background:var(--vermelho-fundo)"><div class="lbl" style="color:#C41F1F">Atrasado</div><div class="n" style="margin-top:10px;color:var(--vermelho)">2,27</div><div style="font-size:15px;color:#7A1414;margin-top:8px">nota média · 54% de notas 1</div></div>
+        <div class="card vis" style="grid-column:1/-1"><h3>Sellers agrupados pelo atraso</h3><div class="sub">Sellers com 30+ avaliações, em quatro grupos iguais</div><div id="g-quartis"></div></div>
+      </div>
+      <div class="card vis"><h3>Quem atrasa: seller ou transporte?</h3><div class="sub">Pedidos atrasados, pelo momento em que o atraso aconteceu</div>
+        <div class="partes"><div style="width:72%;background:var(--azul)"><b>72%</b><span>seller postou no prazo</span></div><div style="width:28%;background:var(--vermelho)"><b>28%</b><span>postou atrasado</span></div></div>
+        <table style="margin-top:22px"><thead><tr><th>Etapa (dias médios)</th><th class="num">No prazo</th><th class="num">Atrasados</th></tr></thead><tbody>
+          <tr><td>Da compra à postagem (seller)</td><td class="num">3,0</td><td class="num"><b>6,1</b></td></tr>
+          <tr><td>Da postagem à entrega (transporte)</td><td class="num">8,0</td><td class="num" style="color:#C41F1F"><b>27,9</b></td></tr>
+        </tbody></table>
+        <div class="insight" style="--c:var(--azul);--c2:var(--azul-tinta);margin-top:18px"><div class="lbl">Leitura</div><p>O gargalo é o <b>transporte</b>: o atraso acontece depois que o produto sai do seller.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · ONDE DÓI -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><div>
+      <span class="lbl">04 · Onde dói</span>
+      <h2>O cliente do Nordeste espera 19,9 dias, quase o dobro do Sudeste <span class="anot">ƒ título dinâmico</span></h2>
+      <p>60% dos sellers estão em SP. Quanto mais longe o cliente, maior o prazo e menor a nota.</p>
+    </div><span class="badge media">Prioridade média · logística regional</span></div>
+    <div class="grid" style="grid-template-columns:1.3fr 1fr">
+      <div class="card vis"><h3>Prazo médio de entrega por estado</h3><div class="sub">Dias · estados com 300+ pedidos · vermelho = acima de 18 dias · passe o mouse para ver a região</div><div id="g-uf"></div></div>
+      <div class="card vis"><h3>Por região do cliente</h3><div class="sub">Prazo, atraso e nota</div>
+        <table><thead><tr><th>Região</th><th class="num">Prazo</th><th class="num">Atraso</th><th class="num">Nota</th></tr></thead><tbody id="t-reg"></tbody></table></div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · RECOMENDAÇÃO -->
+<section style="padding-bottom:20px">
+  <div class="wrap">
+    <div style="border-radius:16px;padding:34px 36px;color:#fff;background:var(--azul)">
+      <span class="lbl" style="color:#CFE0FF">05 · Recomendação</span>
+      <h2 style="font-size:34px;font-weight:700;letter-spacing:-.025em;line-height:1.2;margin-top:6px;max-width:1500px">Trocar o critério de "melhor seller" e atacar o atraso no transporte: é a entrega que decide a nota.</h2>
+      <p style="font-size:18px;color:#E6EEFF;margin-top:10px">Evitar metade dos atrasos sobe a nota média de <b style="color:#fff">4,16 para 4,22</b> e reduz as notas 1 de 9,7% para 7,9%.</p>
+      <div class="card" style="margin-top:22px;color:var(--grafite);overflow:hidden">
+        <table><thead><tr><th>Ordem</th><th>Frente</th><th>Decisão</th><th>Dono</th><th>Prazo</th><th>Indicador · hoje → meta</th><th>Esforço</th></tr></thead><tbody>
+          <tr><td><b>1</b></td><td><b>Atraso no transporte</b></td><td>Alerta de pedido em risco e revisão das rotas com mais atraso</td><td>Logística</td><td>90 dias</td><td>Atraso · 6,7% → 3,5%</td><td>Médio</td></tr>
+          <tr><td><b>2</b></td><td><b>Critério de melhor seller</b></td><td>Ranquear por faturamento + nota ajustada + pontualidade</td><td>Comercial</td><td>30 dias</td><td>Referências com atraso &lt; 4%</td><td>Baixo</td></tr>
+          <tr><td><b>3</b></td><td><b>Nordeste e Norte</b></td><td>Prazo realista por região e sellers mais perto do cliente</td><td>Logística + Comercial</td><td>6 meses</td><td>Prazo NE · 19,9 → 15 dias</td><td>Alto</td></tr>
+        </tbody></table>
+      </div>
+      <p style="font-size:13px;color:#CFE0FF;margin-top:12px">Cartões de decisão completos (fato, interpretação, causas, validação, ação, resultado e acompanhamento) em docs/05.</p>
+    </div>
+  </div>
+</section>
+
+<footer style="padding:18px 0 36px">
+  <div class="wrap" style="display:flex;gap:40px;font-size:14px;color:var(--grafite-2)">
+    <span><b style="color:var(--grafite)">Dados:</b> Olist (Kaggle), pedidos reais e anonimizados · CC BY-NC-SA 4.0</span>
+    <span><b style="color:var(--grafite)">Modelo:</b> PostgreSQL → Power Query (src → stg → ft/dm) → DAX</span>
+    <span style="margin-left:auto"><b style="color:var(--grafite)">Matheus Mendes</b> · Analista de Dados</span>
+  </div>
+</footer>
+
+<script src="graficos.js"></script>
+<script src="dados.js"></script>
+<script>
+icones();
+const ROT={"relogios_presentes":"Relógios e presentes"};
+colunas(document.getElementById("g-faixas"), {labels:D.faixas.map(f=>f[0]+" dias"), valores:D.faixas.map(f=>f[1]), destaque:[3,4], decimais:2, altura:250});
+const meses=["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+colunas(document.getElementById("g-mensal"), {labels:D.mensal.map(m=>meses[+m[0].slice(5)-1]), valores:D.mensal.map(m=>m[1]), destaque:[10], decimais:1, altura:280});
+// dispersão faturamento × nota
+(function(){const el=document.getElementById("g-scatter"),W=el.clientWidth,H=380,pl=46,pb=34;
+  const xs=D.scatter.map(p=>Math.log10(p[0])),xmin=Math.min(...xs),xmax=Math.max(...xs);
+  const X=v=>pl+(W-pl-12)*(Math.log10(v)-xmin)/(xmax-xmin), Y=n=>12+(H-pb-12)*(1-(n-2.8)/(5-2.8));
+  let s=`<svg width="${W}" height="${H}">`;
+  s+=`<rect x="${X(D.media_fat_30)}" y="${Y(5)}" width="${W-12-X(D.media_fat_30)}" height="${Y(D.media_nota)-Y(5)}" fill="#E3FAEF" rx="8"/>`;
+  s+=`<text x="${W-20}" y="${Y(5)+20}" text-anchor="end" font-size="13" font-weight="700" fill="#00995A">vende muito e bem</text>`;
+  s+=`<rect x="${X(D.media_fat_30)}" y="${Y(D.media_nota)}" width="${W-12-X(D.media_fat_30)}" height="${Y(2.8)-Y(D.media_nota)}" fill="#FFEDED" rx="8"/>`;
+  s+=`<text x="${W-20}" y="${Y(2.8)-10}" text-anchor="end" font-size="13" font-weight="700" fill="#C41F1F">vende muito, nota abaixo da média</text>`;
+  s+=`<line x1="${pl}" x2="${W-12}" y1="${Y(D.media_nota)}" y2="${Y(D.media_nota)}" stroke="#111" stroke-dasharray="4 4"/><text x="${pl+4}" y="${Y(D.media_nota)-6}" font-size="12" fill="#5E5E5E">nota média 4,16</text>`;
+  D.scatter.forEach(p=>{const r=p[2]>.10;s+=`<circle cx="${X(p[0])}" cy="${Y(p[1])}" r="${r?5:3.5}" fill="${r?"#FF3B3B":"#1A6BF5"}" fill-opacity="${r?.85:.35}"/>`});
+  [10,30,100].forEach(v=>s+=`<text x="${X(v)}" y="${H-10}" text-anchor="middle" font-size="12" fill="#5E5E5E">R$ ${v} mil</text>`);
+  [3,4,5].forEach(n=>s+=`<text x="${pl-10}" y="${Y(n)+4}" text-anchor="end" font-size="12" fill="#5E5E5E">${n}</text>`);
+  el.innerHTML=s+"</svg>"})();
+document.getElementById("t-top").innerHTML=D.top10.map(t=>`<tr><td style="font-family:Consolas,monospace">${t[0]}</td><td class="num">${fmt(t[1],0)}</td><td class="num" style="font-weight:700;color:${t[2]<D.media_nota?"#C41F1F":"#00995A"}">${fmt(t[2],2)}</td><td class="num" style="color:${t[3]>10?"#C41F1F":"#3F3F3F"};font-weight:${t[3]>10?700:400}">${fmt(t[3],1)}%</td></tr>`).join("");
+// quartis de atraso
+document.getElementById("g-quartis").innerHTML=[["Menor atraso",1.5,4.32],["2º grupo",4.1,4.23],["3º grupo",6.9,4.13],["Maior atraso",12.9,3.95]].map(([n,a,v],i)=>`<div class="quartil"><span>${n} <small style="color:#5E5E5E">(${fmt(a,1)}%)</small></span><span class="b"><i style="width:${(v-3.5)/(4.5-3.5)*100}%;background:${i==3?"#FF3B3B":"#1A6BF5"}"></i></span><b>${fmt(v,2)}</b></div>`).join("")+`<div style="font-size:13px;color:#5E5E5E;margin-top:10px">Barra = nota média do grupo (escala de 3,5 a 4,5)</div>`;
+barrasH(document.getElementById("g-uf"), {itens:D.uf.slice(0,12).map(u=>[u[0],u[1]]), altura:30, lw:50, decimais:1, sufixo:" d", cor:v=>v>18?"#FF3B3B":"#CFE0FF"});
+document.getElementById("t-reg").innerHTML=D.regioes.map(r=>`<tr><td><b>${r[0]}</b></td><td class="num">${fmt(r[1],1)} dias</td><td class="num" style="color:${r[2]>10?"#C41F1F":"#3F3F3F"};font-weight:${r[2]>10?700:400}">${fmt(r[2],1)}%</td><td class="num" style="font-weight:700;color:${r[3]<4.1?"#C41F1F":"#111"}">${fmt(r[3],2)}</td></tr>`).join("");
+</script>
+</body>
+</html>

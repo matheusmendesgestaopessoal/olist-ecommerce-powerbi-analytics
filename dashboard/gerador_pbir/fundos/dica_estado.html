@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Fundo · Dica do estado</title>
+<link rel="stylesheet" href="base.css">
+<style>
+  html,body{width:320px;height:240px;overflow:hidden;background:#fff}
+  .linha{display:flex;align-items:center;justify-content:space-between;height:40px;border-top:1px solid var(--divisor);font-size:14px;color:var(--grafite-2)}
+</style>
+</head>
+<body>
+<!-- Página de dica (tooltip) do estado: aparece ao passar o mouse nas barras de estado -->
+<div style="padding:16px 18px">
+  <div data-v="h_estado" style="height:26px"></div>
+  <div data-v="t_sub" style="height:18px;margin:2px 0 14px"></div>
+  <div class="linha">Prazo médio de entrega<div data-v="v_prazo" style="width:90px;height:20px"></div></div>
+  <div class="linha">Pedidos atrasados<div data-v="v_atraso" style="width:90px;height:20px"></div></div>
+  <div class="linha">Nota média<div data-v="v_nota" style="width:90px;height:20px"></div></div>
+</div>
+<script src="base.js"></script>
+<script>medir();</script>
+</body>
+</html>

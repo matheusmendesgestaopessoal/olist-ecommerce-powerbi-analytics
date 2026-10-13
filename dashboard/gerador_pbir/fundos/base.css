@@ -1,0 +1,113 @@
+/* Camada estática do dashboard (vira a imagem de fundo das páginas do Power BI).
+   Mesma identidade do protótipo v2: cores e tipografia do portfólio, cara de ferramenta de trabalho.
+   Elementos com [data-v] são "vagas": o gerador mede a posição deles e coloca ali o visual do Power BI. */
+:root{
+  --azul:#1A6BF5;--azul-tinta:#0F4FD1;--azul-pasta:#5AB0FF;--azul-selecao:#CFE0FF;--azul-fundo:#EEF4FF;
+  --amarelo:#FFD93D;--vermelho:#FF3B3B;--vermelho-fundo:#FFEDED;--verde:#00D980;--verde-escuro:#00995A;--verde-fundo:#E3FAEF;
+  --grafite:#111;--grafite-2:#5E5E5E;--texto:#3F3F3F;--borda:#ECECEA;--divisor:#EFEFED;--fundo:#F7F8FA;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--fundo)}
+body{width:1920px;font-family:"Segoe UI",system-ui,sans-serif;color:var(--grafite);-webkit-font-smoothing:antialiased}
+.wrap{width:1712px;margin:0 auto}
+.lbl{font-size:14px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--grafite-2)}
+.card{background:#fff;border:1px solid var(--borda);border-radius:16px;box-shadow:0 1px 2px rgba(17,17,17,.04),0 8px 24px rgba(17,17,17,.05)}
+.grid{display:grid;gap:20px}
+.sel{display:inline-block;padding:0 10px;background:var(--azul-selecao);box-shadow:inset 3px 0 0 var(--azul),inset -3px 0 0 var(--azul)}
+
+/* vagas dos visuais: invisíveis na imagem; com ?debug ficam marcadas */
+[data-v]{display:block}
+.debug [data-v]{outline:2px dashed #B9A8F5;background:rgba(185,168,245,.15)}
+
+/* cabeçalho */
+header{background:#fff;border-bottom:1px solid var(--divisor)}
+header .wrap{height:84px;display:flex;align-items:center;justify-content:space-between}
+.marca{display:flex;align-items:center;gap:14px}
+.marca .av{width:40px;height:40px;border-radius:10px;background:var(--azul);color:#fff;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center}
+.marca .t{font-size:19px;font-weight:700}
+.marca .s{font-size:13px;color:var(--grafite-2)}
+.filtros{display:flex;align-items:center;gap:10px}
+.filtro{display:flex;flex-direction:column;gap:0;padding:6px 10px 4px 14px;width:170px;height:54px;border:1px solid var(--borda);border-radius:10px;background:#fff}
+.filtro small{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--grafite-2)}
+.filtro [data-v]{flex:1}
+.btn-limpar{display:flex;align-items:center;height:44px;padding:0 16px;border-radius:10px;font-size:14px;font-weight:600;color:var(--azul-tinta);background:var(--azul-fundo)}
+
+/* seções */
+section{padding:44px 0 12px}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:32px;margin-bottom:22px}
+.sec-head h2{font-size:34px;font-weight:700;letter-spacing:-.025em;line-height:1.15;margin-top:6px}
+.sec-head .h2v{height:44px;margin-top:6px;width:1380px}
+.sec-head p{font-size:17px;color:var(--grafite-2);margin-top:6px}
+.badge{display:inline-flex;align-items:center;justify-content:center;height:34px;border-radius:999px;font-size:14px;font-weight:700;white-space:nowrap;flex:none}
+.badge.alta{background:var(--vermelho-fundo);color:#C41F1F}
+.badge.media{background:#FFF4CC;color:#8A6400}
+
+/* cards de gráfico */
+.vis{position:relative;padding:22px 24px;display:flex;flex-direction:column}
+.vis h3{font-size:18px;font-weight:600}
+.vis .sub{font-size:14px;color:var(--grafite-2);margin:3px 0 12px}
+.vis > [data-v]{flex:1}
+
+/* KPIs */
+.kpi{padding:20px 22px;height:150px}
+.kpi .k-lbl{display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:600;color:var(--grafite-2)}
+.kpi .k-val{height:50px;margin-top:6px}
+.kpi .k-ctx{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--grafite-2);margin-top:8px;height:22px}
+.kpi.destaque{background:var(--azul);border-color:var(--azul);color:#fff}
+.kpi.destaque .k-lbl,.kpi.destaque .k-ctx{color:#DCE8FF}
+.delta{display:inline-block;height:22px;padding:0 8px;border-radius:999px;font-size:13px;font-weight:700;flex:none}
+.delta.ruim{background:var(--vermelho-fundo)}
+.delta.neutro{background:#F1F2F4}
+.delta.claro{background:rgba(255,255,255,.2)}
+.ico{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:var(--azul-fundo)}
+.kpi.destaque .ico{background:rgba(255,255,255,.18)}
+
+/* cards de insight (faixa colorida à esquerda) */
+.insight{background:#fff;border:1px solid var(--borda);border-left:5px solid var(--c);border-radius:12px;padding:14px 18px}
+.insight .lbl{color:var(--c2,var(--grafite-2));font-size:13px}
+.insight [data-v]{margin-top:4px}
+
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{text-align:left;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--grafite-2);padding:10px 14px;background:var(--fundo)}
+td{padding:12px 14px;border-top:1px solid var(--divisor);color:var(--texto)}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+
+/* cartão de decisão */
+.cartao{padding:0;overflow:hidden}
+.cartao-topo{display:flex;align-items:center;justify-content:space-between;padding:18px 26px;border-bottom:1px solid var(--divisor);background:#fff}
+.etqs{display:flex;gap:8px}
+.etq{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;font-size:13px;font-weight:700;background:var(--fundo);color:var(--grafite-2)}
+.etq b{color:var(--grafite)}
+.tres{display:grid;grid-template-columns:1fr 1fr 1.15fr}
+.col{padding:24px 26px;border-right:1px solid var(--divisor)}
+.col:last-child{border-right:0}
+.col-h{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.num-etapa{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;background:var(--c)}
+.col-h b{font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--c)}
+.col p{font-size:16px;line-height:1.55;color:var(--texto)}
+.col p + p{margin-top:10px}
+.fonte{margin-top:12px;font-size:13px;color:var(--grafite-2)}
+.fonte code{font-family:Consolas,monospace;background:var(--fundo);padding:1px 6px;border-radius:4px;color:var(--grafite)}
+.lacuna{margin-top:12px;padding:10px 12px;border-radius:10px;background:#FFF8DB;font-size:14px;line-height:1.5;color:#5C4A00}
+.passos{list-style:none;display:flex;flex-direction:column;gap:10px}
+.passos li{display:grid;grid-template-columns:26px 1fr;gap:10px;font-size:16px;line-height:1.55;color:var(--texto)}
+.passos .n{width:24px;height:24px;border-radius:50%;background:var(--azul-fundo);color:var(--azul-tinta);font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.passos .meta{display:block;font-size:13px;color:var(--grafite-2);margin-top:2px}
+.rodape-cartao{display:grid;grid-template-columns:1.1fr 1fr 1fr;border-top:1px solid var(--divisor);background:var(--fundo)}
+.rodape-cartao > div{padding:20px 26px;border-right:1px solid var(--divisor)}
+.rodape-cartao > div:last-child{border-right:0}
+.mini-h{font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--grafite-2);margin-bottom:10px}
+.tbl-sm td,.tbl-sm th{padding:6px 8px;font-size:14px}
+.tbl-sm th{background:transparent;padding-left:0}
+.tbl-sm td:first-child{padding-left:0}
+.conf{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}
+.conf.m{background:#FFF4CC;color:#8A6400}.conf.b{background:#EFEFED;color:#5E5E5E}.conf.a{background:var(--verde-fundo);color:var(--verde-escuro)}
+.conf.x{background:#EFEFED;color:#9A9A9A;text-decoration:line-through}
+.cenarios{display:flex;gap:8px}
+.cen{flex:1;padding:10px 12px;border-radius:10px;background:#fff;border:1px solid var(--borda)}
+.cen small{display:block;font-size:12px;color:var(--grafite-2)}
+.cen b{font-size:18px}
+.cen.prov{border-color:var(--azul);background:var(--azul-fundo)}
+.gatilho{margin-top:10px;font-size:14px;line-height:1.5;color:var(--texto)}
+.gatilho.alerta{padding:10px 12px;border-radius:10px;background:var(--vermelho-fundo);color:#7A1414}
+.prio{display:inline-block;padding:4px 10px;border-radius:999px;font-size:13px;font-weight:700}

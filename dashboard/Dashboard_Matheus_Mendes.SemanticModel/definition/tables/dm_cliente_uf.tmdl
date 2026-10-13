@@ -1,0 +1,51 @@
+/// Estado e região do cliente (destino do pedido).
+table dm_cliente_uf
+	lineageTag: 0d3c170b-a3b4-4e93-a6f2-daff811f5dec
+
+	column uf
+		dataType: string
+		lineageTag: d9dd4e07-c383-4f8a-9be3-979708a24f26
+		summarizeBy: none
+		sourceColumn: uf
+
+	column estado
+		dataType: string
+		lineageTag: c82b6b2b-be8d-4c07-8205-8139008619f3
+		summarizeBy: none
+		sourceColumn: estado
+
+	column regiao
+		dataType: string
+		lineageTag: 922d64f6-727e-49cd-8f28-a80a04a414c2
+		summarizeBy: none
+		sourceColumn: regiao
+		sortByColumn: regiao_ordem
+
+	column regiao_ordem
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 7353a498-d931-468d-a013-80977b07e2fd
+		summarizeBy: none
+		sourceColumn: regiao_ordem
+
+	partition dm_cliente_uf = m
+		mode: import
+		queryGroup: 20_DIMENSIONS
+		source =
+				let
+				  Regioes = [Sudeste = 1, Sul = 2, #"Centro-Oeste" = 3, Nordeste = 4, Norte = 5],
+				  Estados = #table(type table [uf = text, estado = text, regiao = text], {
+				      {"SP", "São Paulo", "Sudeste"}, {"RJ", "Rio de Janeiro", "Sudeste"}, {"MG", "Minas Gerais", "Sudeste"}, {"ES", "Espírito Santo", "Sudeste"},
+				      {"PR", "Paraná", "Sul"}, {"SC", "Santa Catarina", "Sul"}, {"RS", "Rio Grande do Sul", "Sul"},
+				      {"DF", "Distrito Federal", "Centro-Oeste"}, {"GO", "Goiás", "Centro-Oeste"}, {"MT", "Mato Grosso", "Centro-Oeste"}, {"MS", "Mato Grosso do Sul", "Centro-Oeste"},
+				      {"BA", "Bahia", "Nordeste"}, {"PE", "Pernambuco", "Nordeste"}, {"CE", "Ceará", "Nordeste"}, {"MA", "Maranhão", "Nordeste"},
+				      {"PB", "Paraíba", "Nordeste"}, {"RN", "Rio Grande do Norte", "Nordeste"}, {"AL", "Alagoas", "Nordeste"}, {"PI", "Piauí", "Nordeste"}, {"SE", "Sergipe", "Nordeste"},
+				      {"PA", "Pará", "Norte"}, {"AM", "Amazonas", "Norte"}, {"TO", "Tocantins", "Norte"}, {"RO", "Rondônia", "Norte"},
+				      {"AC", "Acre", "Norte"}, {"AP", "Amapá", "Norte"}, {"RR", "Roraima", "Norte"}}),
+				  Ordem = Table.AddColumn(Estados, "regiao_ordem", each Record.Field(Regioes, [regiao]), Int64.Type)
+				in
+				  Ordem
+
+	annotation PBI_ResultType = Table
+

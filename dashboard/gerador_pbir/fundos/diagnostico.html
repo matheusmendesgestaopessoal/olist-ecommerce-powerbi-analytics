@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Fundo · Diagnóstico</title>
+<link rel="stylesheet" href="base.css">
+<style>
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .vs .card{padding:22px 24px;height:170px}
+  .vs .n{height:72px;margin-top:4px}
+  .leg{display:flex;gap:22px;margin-top:12px;font-size:14px;color:var(--grafite-2)}
+  .leg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:8px;vertical-align:-1px}
+  .dica{display:flex;align-items:center;gap:10px;margin-top:14px;padding:12px 16px;border-radius:10px;background:var(--azul-fundo);font-size:14px;color:var(--azul-tinta);font-weight:600}
+  .reco td{color:var(--texto);font-size:15px}
+</style>
+</head>
+<body>
+
+<!-- CABEÇALHO: identificação + filtros que valem para a página toda -->
+<header>
+  <div class="wrap">
+    <div class="marca">
+      <div class="av">OL</div>
+      <div><div class="t">Olist · Desempenho de sellers e categorias</div><div class="s">Pedidos entregues · set/2016 a ago/2018 · análise de Matheus Mendes</div></div>
+    </div>
+    <div class="filtros">
+      <div class="filtro"><small>Ano</small><div data-v="f_ano"></div></div>
+      <div class="filtro" style="width:200px"><small>Região do cliente</small><div data-v="f_regiao"></div></div>
+      <div class="filtro" style="width:230px"><small>Categoria</small><div data-v="f_categoria"></div></div>
+      <span class="btn-limpar" data-v="b_limpar">Limpar filtros</span>
+    </div>
+  </div>
+</header>
+
+<!-- PERGUNTA + RESPOSTA -->
+<section style="padding-top:40px">
+  <div class="wrap grid" style="grid-template-columns:1.25fr 1fr;align-items:stretch">
+    <div class="card" style="padding:34px 38px;height:360px">
+      <div class="lbl">Pergunta central</div>
+      <h1 style="font-size:50px;font-weight:700;letter-spacing:-.035em;line-height:1.12;margin-top:10px">Quem vende mais é quem o cliente <span class="sel">aprova</span>?</h1>
+      <div class="lbl" style="color:var(--azul-tinta);margin-top:26px">Resposta</div>
+      <div data-v="t_resposta" style="height:90px;margin-top:6px;width:880px"></div>
+    </div>
+    <div class="card vis" style="padding:28px 30px;height:360px">
+      <h3>Nota média por prazo de entrega</h3>
+      <div class="sub">Dias entre a compra e a entrega · pedidos avaliados · em azul, nota abaixo de 4</div>
+      <div data-v="g_faixas"></div>
+    </div>
+  </div>
+
+  <div class="wrap grid" style="grid-template-columns:repeat(5,1fr);margin-top:20px">
+    <div class="card kpi destaque"><div class="k-lbl">Faturamento <span class="ico" data-i="receita" data-c="#fff"></span></div><div class="k-val" data-v="k_fat"></div><div class="k-ctx">por mês, 2017 → 2018 <span class="delta claro" data-v="p_cresc" style="width:64px"></span></div></div>
+    <div class="card kpi"><div class="k-lbl">Pedidos entregues <span class="ico" data-i="pedidos"></span></div><div class="k-val" data-v="k_pedidos"></div><div class="k-ctx"><div data-v="c_ticket" style="width:260px;height:22px"></div></div></div>
+    <div class="card kpi"><div class="k-lbl">Nota média <span class="ico" data-i="meta"></span></div><div class="k-val" data-v="k_nota"></div><div class="k-ctx">Notas 1 <span class="delta ruim" data-v="p_notas1" style="width:64px"></span></div></div>
+    <div class="card kpi"><div class="k-lbl">Pedidos atrasados <span class="ico" data-i="cancelamento" data-c="#FF3B3B" style="background:var(--vermelho-fundo)"></span></div><div class="k-val" data-v="k_atraso"></div><div class="k-ctx">Nota deles <span class="delta ruim" data-v="p_nota_atrasado" style="width:56px"></span></div></div>
+    <div class="card kpi"><div class="k-lbl">Sellers ativos <span class="ico" data-i="estoque"></span></div><div class="k-val" data-v="k_sellers"></div><div class="k-ctx"><div data-v="c_top10" style="width:290px;height:22px"></div></div></div>
+  </div>
+  <p class="wrap" style="font-size:13px;color:var(--grafite-2);margin-top:10px">Faturamento = preço dos itens de pedidos entregues, sem frete. Nota = média das avaliações do pedido. Atraso = entrega depois da data prometida ao cliente. Todos os valores mudam com os filtros.</p>
+</section>
+
+<!-- 01 · CONTEXTO -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><div>
+      <span class="lbl">01 · Contexto</span>
+      <div class="h2v" data-v="h_contexto"></div>
+      <p>A pergunta original: quem lidera, por ano, em faturamento, volume e nota?</p>
+    </div></div>
+    <div class="grid" style="grid-template-columns:1.25fr 1fr">
+      <div class="card vis" style="height:440px"><h3>Faturamento mensal</h3><div class="sub">R$ mil · 2017 e 2018 · em azul, o mês de maior faturamento</div><div data-v="g_mensal"></div></div>
+      <div class="card vis" style="height:440px"><h3>Categoria campeã por ano</h3><div class="sub">Nota = nota ajustada pelo número de avaliações (categorias com 30+)</div>
+        <div data-v="t_campeoes" style="flex:none;height:170px"></div>
+        <div class="insight" style="--c:var(--amarelo);--c2:#8A6400;margin-top:auto"><div class="lbl">Repare</div><p style="font-size:16px;line-height:1.5;color:var(--texto);margin-top:4px">Quem fatura mais nunca é quem tem a melhor nota, nem nas categorias, nem nos sellers. Por isso a análise vai além do ranking.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 · VENDER MAIS × VENDER MELHOR -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><div>
+      <span class="lbl">02 · Vender mais × vender melhor</span>
+      <div class="h2v" data-v="h_vender"></div>
+      <p>Entre os 623 sellers com 30 ou mais avaliações, a correlação entre faturamento e nota é −0,08: praticamente nenhuma.</p>
+    </div><span class="badge media" style="padding:0 16px">Faturamento não prevê a nota</span></div>
+    <div class="grid" style="grid-template-columns:1.4fr 1fr">
+      <div class="card vis" style="height:560px"><h3>Faturamento × nota dos sellers</h3><div class="sub">Cada ponto é um seller com 30+ avaliações · faturamento em escala logarítmica · vermelho = atraso acima de 10%</div><div data-v="g_scatter"></div></div>
+      <div class="card vis" style="height:560px"><h3>Os 10 maiores em faturamento</h3><div class="sub">Nota ajustada (verde = acima da média da rede) · % de pedidos atrasados</div>
+        <div data-v="t_top10" style="flex:none;height:390px"></div>
+        <div class="dica" style="margin-top:auto"><span data-i="seta"></span> Botão direito num seller (tabela ou gráfico) → Drill-through → <u>Detalhe do seller</u></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · O QUE DECIDE A NOTA -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><div>
+      <span class="lbl">03 · O que decide a nota</span>
+      <div class="h2v" data-v="h_nota"></div>
+      <p>O cliente avalia a experiência, não só o produto. Um atraso apaga a boa venda.</p>
+    </div><span class="badge alta" style="padding:0 16px">Prioridade alta · atraso</span></div>
+    <div class="grid" style="grid-template-columns:1fr 1fr">
+      <div class="vs">
+        <div class="card"><div class="lbl" style="color:var(--verde-escuro)">No prazo</div><div class="n" data-v="v_prazo"></div><div data-v="c_prazo" style="height:22px;margin-top:6px"></div></div>
+        <div class="card" style="border-color:#FFC9C9;background:var(--vermelho-fundo)"><div class="lbl" style="color:#C41F1F">Atrasado</div><div class="n" data-v="v_atrasado"></div><div data-v="c_atrasado" style="height:22px;margin-top:6px"></div></div>
+        <div class="card vis" style="grid-column:1/-1;height:300px"><h3>Sellers agrupados pelo atraso</h3><div class="sub">Sellers com 30+ avaliações em quatro grupos iguais pelo % de atraso · barra = nota média do grupo</div><div data-v="g_grupos"></div></div>
+      </div>
+      <div class="card vis" style="height:490px"><h3>Quem atrasa: seller ou transporte?</h3><div class="sub">Pedidos atrasados, pelo momento em que o atraso aconteceu</div>
+        <div data-v="g_partes" style="flex:none;height:64px;margin-top:6px"></div>
+        <div class="leg"><span><i style="background:var(--azul)"></i>Seller postou no prazo: atrasou no transporte</span><span><i style="background:var(--vermelho)"></i>Seller postou depois do limite</span></div>
+        <table style="margin-top:22px"><thead><tr><th>Etapa (dias médios)</th><th class="num">No prazo</th><th class="num">Atrasados</th></tr></thead><tbody>
+          <tr><td>Da compra à postagem (seller)</td><td><div data-v="d_post_ok" style="height:22px"></div></td><td><div data-v="d_post_at" style="height:22px"></div></td></tr>
+          <tr><td>Da postagem à entrega (transporte)</td><td><div data-v="d_transp_ok" style="height:22px"></div></td><td><div data-v="d_transp_at" style="height:22px"></div></td></tr>
+        </tbody></table>
+        <div class="insight" style="--c:var(--azul);--c2:var(--azul-tinta);margin-top:auto"><div class="lbl">Leitura</div><div data-v="t_leitura" style="height:48px"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · ONDE DÓI -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><div>
+      <span class="lbl">04 · Onde dói</span>
+      <div class="h2v" data-v="h_regiao"></div>
+      <p>60% dos sellers estão em SP. Quanto mais longe o cliente, maior o prazo e menor a nota.</p>
+    </div><span class="badge media" style="padding:0 16px">Prioridade média · logística regional</span></div>
+    <div class="grid" style="grid-template-columns:1.3fr 1fr">
+      <div class="card vis" style="height:520px"><h3>Prazo médio de entrega por estado</h3><div class="sub">Dias · os 12 maiores prazos, estados com 300+ pedidos · vermelho = acima de 18 dias · passe o mouse para detalhar</div><div data-v="g_uf"></div></div>
+      <div class="card vis" style="height:520px"><h3>Por região do cliente</h3><div class="sub">Prazo, atraso e nota dos pedidos avaliados</div><div data-v="t_regioes" style="flex:none;height:280px"></div>
+        <div class="insight" style="--c:var(--amarelo);--c2:#8A6400;margin-top:auto"><div class="lbl">Por que importa</div><p style="font-size:16px;line-height:1.5;color:var(--texto);margin-top:4px">O produto sai de SP e viaja longe: prazo e atraso maiores derrubam a nota de Nordeste e Norte.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · RECOMENDAÇÃO -->
+<section style="padding-bottom:20px">
+  <div class="wrap">
+    <div style="border-radius:16px;padding:34px 36px;color:#fff;background:var(--azul)">
+      <span class="lbl" style="color:#CFE0FF">05 · Recomendação</span>
+      <h2 style="font-size:34px;font-weight:700;letter-spacing:-.025em;line-height:1.2;margin-top:6px;max-width:1500px">Trocar o critério de "melhor seller" e atacar o atraso no transporte: é a entrega que decide a nota.</h2>
+      <p style="font-size:18px;color:#E6EEFF;margin-top:10px">Evitar metade dos atrasos sobe a nota média de <b style="color:#fff">4,16 para 4,22</b> e reduz as notas 1 de 9,7% para 7,9%.</p>
+      <div class="card reco" style="margin-top:22px;color:var(--grafite);overflow:hidden">
+        <table><thead><tr><th>Ordem</th><th>Frente</th><th>Decisão</th><th>Dono</th><th>Prazo</th><th>Indicador · hoje → meta</th><th>Esforço</th></tr></thead><tbody>
+          <tr><td><b>1</b></td><td><b style="color:var(--grafite)">Atraso no transporte</b></td><td>Alerta de pedido em risco e revisão das rotas com mais atraso</td><td>Logística</td><td>90 dias</td><td>Atraso · 6,7% → 3,5%</td><td>Médio</td></tr>
+          <tr><td><b>2</b></td><td><b style="color:var(--grafite)">Critério de melhor seller</b></td><td>Ranquear por faturamento + nota ajustada + pontualidade</td><td>Comercial</td><td>30 dias</td><td>Referências com atraso &lt; 4%</td><td>Baixo</td></tr>
+          <tr><td><b>3</b></td><td><b style="color:var(--grafite)">Nordeste e Norte</b></td><td>Prazo realista por região e sellers mais perto do cliente</td><td>Logística + Comercial</td><td>6 meses</td><td>Prazo NE · 19,9 → 15 dias</td><td>Alto</td></tr>
+        </tbody></table>
+      </div>
+      <p style="font-size:13px;color:#CFE0FF;margin-top:12px">Cartões de decisão completos (fato, interpretação, causas, validação, ação, resultado e acompanhamento) em docs/05_analise_e_recomendacoes.md.</p>
+    </div>
+  </div>
+</section>
+
+<footer style="padding:18px 0 36px">
+  <div class="wrap" style="display:flex;gap:40px;font-size:14px;color:var(--grafite-2)">
+    <span><b style="color:var(--grafite)">Dados:</b> Olist (Kaggle), pedidos reais e anonimizados · CC BY-NC-SA 4.0</span>
+    <span><b style="color:var(--grafite)">Modelo:</b> PostgreSQL → Power Query (src → stg → ft/dm) → DAX</span>
+    <span style="margin-left:auto"><b style="color:var(--grafite)">Matheus Mendes</b> · Analista de Dados</span>
+  </div>
+</footer>
+
+<script src="base.js"></script>
+<script>medir();</script>
+</body>
+</html>

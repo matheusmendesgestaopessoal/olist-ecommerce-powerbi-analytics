@@ -64,6 +64,11 @@ table dm_data
 
 		annotation SummarizationSetBy = Automatic
 
+	column 'Mes Ano' = LOWER ( dm_data[Mes Abrev] ) & "/" & RIGHT ( FORMAT ( dm_data[year], "0" ), 2 )
+		lineageTag: 074309ec-7903-467b-91c2-1b52f54d198a
+		summarizeBy: none
+		sortByColumn: year_month
+
 	partition dm_data = m
 		mode: import
 		queryGroup: 20_DIMENSIONS

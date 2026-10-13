@@ -67,8 +67,9 @@ expression src_sellers =
 expression stg_orders =
 		let
 		  Origem = src_orders,
-		  #"As outras colunas foram removidas" = Table.SelectColumns(Origem, {"order_id", "order_status", "order_purchase_timestamp"}),
-		  #"Tipo de coluna alterado" = Table.TransformColumnTypes(#"As outras colunas foram removidas", {{"order_purchase_timestamp", type datetime}}),
+		  #"As outras colunas foram removidas" = Table.SelectColumns(Origem, {"order_id", "customer_id", "order_status", "order_purchase_timestamp", "order_delivered_carrier_date", "order_delivered_customer_date", "order_estimated_delivery_date"}),
+		  #"Vazios como nulo" = Table.ReplaceValue(#"As outras colunas foram removidas", "", null, Replacer.ReplaceValue, {"order_delivered_carrier_date", "order_delivered_customer_date", "order_estimated_delivery_date"}),
+		  #"Tipo de coluna alterado" = Table.TransformColumnTypes(#"Vazios como nulo", {{"order_purchase_timestamp", type datetime}, {"order_delivered_carrier_date", type datetime}, {"order_delivered_customer_date", type datetime}, {"order_estimated_delivery_date", type datetime}}),
 		  #"Coluna duplicada" = Table.DuplicateColumn(#"Tipo de coluna alterado", "order_purchase_timestamp", "order_purchase_timestamp – Cópia"),
 		  #"Tipo de coluna alterado 1" = Table.TransformColumnTypes(#"Coluna duplicada", {{"order_purchase_timestamp – Cópia", type date}}),
 		  #"Colunas renomeadas" = Table.RenameColumns(#"Tipo de coluna alterado 1", {{"order_purchase_timestamp – Cópia", "order_purchase_date"}})
@@ -82,8 +83,8 @@ expression stg_orders =
 expression stg_order_items =
 		let
 		  Origem = src_order_items,
-		  #"As outras colunas foram removidas" = Table.SelectColumns(Origem, {"order_id", "order_item_id", "product_id", "seller_id", "price", "freight_value"}),
-		  #"Tipo de coluna alterado" = Table.TransformColumnTypes(#"As outras colunas foram removidas", {{"order_item_id", Int64.Type}}),
+		  #"As outras colunas foram removidas" = Table.SelectColumns(Origem, {"order_id", "order_item_id", "product_id", "seller_id", "price", "freight_value", "shipping_limit_date"}),
+		  #"Tipo de coluna alterado" = Table.TransformColumnTypes(#"As outras colunas foram removidas", {{"order_item_id", Int64.Type}, {"shipping_limit_date", type datetime}}),
 		  #"O tipo de coluna foi alterado com a localidade" = Table.TransformColumnTypes(#"Tipo de coluna alterado", {{"price", type number}}, "en-US"),
 		  #"O tipo de coluna foi alterado com a localidade 1" = Table.TransformColumnTypes(#"O tipo de coluna foi alterado com a localidade", {{"freight_value", type number}}, "en-US")
 		in
@@ -147,6 +148,29 @@ expression stg_review_order =
 		in
 		  #"Linhas agrupadas"
 	lineageTag: d7fe6c95-1355-4f5e-ae96-b46a2f78c357
+	queryGroup: 10_STAGING
+
+	annotation PBI_ResultType = Table
+
+expression src_customers =
+		let
+		  Origem = PostgreSQL.Database("localhost:5432", "olist"),
+		  #"Navegação 1" = Origem{[Schema = "raw", Item = "customers"]}[Data]
+		in
+		  #"Navegação 1"
+	lineageTag: 473ff31e-a303-4971-9239-eded3273140c
+	queryGroup: 00_SOURCE
+
+	annotation PBI_ResultType = Table
+
+expression stg_customers =
+		let
+		  Origem = src_customers,
+		  #"As outras colunas foram removidas" = Table.SelectColumns(Origem, {"customer_id", "customer_state"}),
+		  #"Texto limpo" = Table.TransformColumns(#"As outras colunas foram removidas", {{"customer_state", each Text.Upper(Text.Clean(_)), type nullable text}})
+		in
+		  #"Texto limpo"
+	lineageTag: eaf29c9b-b04e-4604-8734-90cc85a1ace4
 	queryGroup: 10_STAGING
 
 	annotation PBI_ResultType = Table

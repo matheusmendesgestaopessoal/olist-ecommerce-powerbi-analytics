@@ -9,6 +9,15 @@
         "page": "2.3.1"
       },
       "type": "SharedResources"
+    },
+    "customTheme": {
+      "name": "tema_matheus.json",
+      "reportVersionAtImport": {
+        "visual": "2.13.0",
+        "report": "3.4.0",
+        "page": "2.3.1"
+      },
+      "type": "RegisteredResources"
     }
   },
   "objects": {
@@ -48,6 +57,32 @@
           "name": "Fluent2-CY26SU09",
           "path": "BaseThemes/Fluent2-CY26SU09.json",
           "type": "BaseTheme"
+        }
+      ]
+    },
+    {
+      "name": "RegisteredResources",
+      "type": "RegisteredResources",
+      "items": [
+        {
+          "name": "tema_matheus.json",
+          "path": "tema_matheus.json",
+          "type": "CustomTheme"
+        },
+        {
+          "name": "fundo_detalhe_seller.png",
+          "path": "fundo_detalhe_seller.png",
+          "type": "Image"
+        },
+        {
+          "name": "fundo_diagnostico.png",
+          "path": "fundo_diagnostico.png",
+          "type": "Image"
+        },
+        {
+          "name": "fundo_dica_estado.png",
+          "path": "fundo_dica_estado.png",
+          "type": "Image"
         }
       ]
     }

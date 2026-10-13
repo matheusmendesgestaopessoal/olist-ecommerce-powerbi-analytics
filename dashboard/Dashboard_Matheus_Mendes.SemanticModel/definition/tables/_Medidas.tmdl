@@ -1,414 +1,611 @@
+/// Todas as medidas do relatório. Pastas: 01 Base · 02 Nota · 03 Entrega · 04 Sellers e categorias ·
+/// 05 Comparação com a rede · 10 Textos (títulos e números formatados) · 11 Cores (formatação condicional).
+/// Medidas de pedido agrupam ft_vendas por order_id (o grão é pedido × seller × categoria).
 table _Medidas
 	lineageTag: bfcc991b-048d-43f0-87e9-9ee729a6f41e
 
-	measure Faturamento =
-			
-			SUM(ft_vendas[price])
-		displayFolder: 01_Base
-		lineageTag: 106827b7-acae-4335-88b0-650da8825914
+	measure Faturamento = SUM ( ft_vendas[faturamento] )
+		formatString: "R$ "#,0
+		displayFolder: 01 Base
+		lineageTag: edb7eebc-5bcc-4f3b-a0f7-0618adb1ef8c
 
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Volume Itens' =
-			
-			COUNTROWS(ft_vendas)
-		formatString: 0
-		displayFolder: 01_Base
-		lineageTag: 86a876f5-9baf-42bb-ba70-3840017e4e3d
-
-	measure Pedidos =
-			
-			DISTINCTCOUNT(ft_vendas[order_id])
-		formatString: 0
-		displayFolder: 01_Base
-		lineageTag: 58a02993-f189-4a0e-b608-ef491949bb0d
-
-	measure 'Ticket Médio Seller' =
-			
-			AVERAGEX(
-			    VALUES(ft_vendas[order_id]),
-			    CALCULATE(
-			        SUM(ft_vendas[price])
-			    )
-			)
-		displayFolder: 02_Sellers
-		lineageTag: cba67d8e-937c-48ec-8467-d920eb18646a
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Nota Média Seller' =
-			
-			AVERAGE(ft_avaliacoes_seller[review_score_order])
-		displayFolder: 02_Sellers
-		lineageTag: d52df1ce-9267-4dcf-80f8-fe336bbd00c8
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Qtd Avaliações Seller' =
-			
-			COUNTROWS(ft_avaliacoes_seller)
-		formatString: 0
-		displayFolder: 02_Sellers
-		lineageTag: 8a0dd2aa-97f0-49d3-867d-ee38002536d0
+	measure Pedidos = DISTINCTCOUNT ( ft_vendas[order_id] )
+		formatString: #,0
+		displayFolder: 01 Base
+		lineageTag: dc853bf4-5d35-4e6a-8305-3176a696632a
 
 	measure 'Nota Ajustada Seller' =
-			
-			VAR N =
-			    [Qtd Avaliações Seller]
-			
-			VAR MediaSeller =
-			    [Nota Média Seller]
-			
-			VAR MediaGeralAno =
-			    CALCULATE(
-			        [Nota Média Seller],
-			        REMOVEFILTERS(dm_seller)
-			    )
-			
-			VAR M = 13.88
-			
-			RETURN
-			    IF(
-			        N = 0,
-			        BLANK(),
-			        DIVIDE(N, N + M) * MediaSeller
-			            + DIVIDE(M, N + M) * MediaGeralAno
-			    )
-		displayFolder: 02_Sellers
-		lineageTag: b0399a75-ceb0-4f10-9bd0-0fb4bd7fe308
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Nota Média Categoria' =
-			
-			AVERAGE(ft_avaliacoes_categoria[review_score_order])
-		displayFolder: 03_Categorias
-		lineageTag: 9631a6c2-55ec-4f46-b7dd-94f361eb1e6c
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Qtd Avaliações Categoria' =
-			
-			COUNTROWS(ft_avaliacoes_categoria)
-		formatString: 0
-		displayFolder: 03_Categorias
-		lineageTag: ea8c4111-796a-4288-8a79-d2f806794ab2
+			VAR _n = [Pedidos Avaliados]
+			VAR _m = 13.88
+			VAR _media = CALCULATE ( [Nota Média], REMOVEFILTERS ( dm_seller ) )
+			RETURN IF ( _n > 0, DIVIDE ( _n, _n + _m ) * [Nota Média] + DIVIDE ( _m, _n + _m ) * _media )
+		formatString: 0.00
+		displayFolder: 04 Sellers e categorias
+		lineageTag: 3704a6c4-8247-4923-a66a-48975f945d0c
 
 	measure 'Nota Ajustada Categoria' =
-			
-			VAR N =
-			    [Qtd Avaliações Categoria]
-			
-			VAR MediaCategoria =
-			    [Nota Média Categoria]
-			
-			VAR MediaGeralAno =
-			    CALCULATE(
-			        [Nota Média Categoria],
-			        REMOVEFILTERS(dm_categoria)
-			    )
-			
-			VAR M = 16.36
-			
-			RETURN
-			    IF(
-			        N = 0,
-			        BLANK(),
-			        DIVIDE(N, N + M) * MediaCategoria
-			            + DIVIDE(M, N + M) * MediaGeralAno
-			    )
-		displayFolder: 03_Categorias
-		lineageTag: f95e3caa-4dd8-4770-be26-82753a091245
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Ticket Médio Geral' =
-			
-			DIVIDE(
-			    [Faturamento],
-			    [Pedidos]
-			)
-		displayFolder: 01_Base
-		lineageTag: 1714d68e-90d9-424c-a987-945b06bcaa9f
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Top Categoria Faturamento' =
-			
-			VAR TopCategoria =
-			    TOPN(
-			        1,
-			        FILTER(
-			            ALLSELECTED(dm_categoria),
-			            dm_categoria[ranking_eligible] = TRUE()
-			        ),
-			        [Faturamento],
-			        DESC
-			    )
-			RETURN
-			    CONCATENATEX(
-			        TopCategoria,
-			        dm_categoria[category_display],
-			        ", "
-			    )
-		displayFolder: 03_Categorias
-		lineageTag: 5cc4ebc4-8139-442a-8e53-efb4f76d1f5c
+			VAR _n = [Pedidos Avaliados]
+			VAR _m = 16.36
+			VAR _media = CALCULATE ( [Nota Média], REMOVEFILTERS ( dm_categoria ) )
+			RETURN IF ( _n > 0, DIVIDE ( _n, _n + _m ) * [Nota Média] + DIVIDE ( _m, _n + _m ) * _media )
+		formatString: 0.00
+		displayFolder: 04 Sellers e categorias
+		lineageTag: 3a4179b0-fcd0-494b-9eff-43a627890c9c
 
 	measure 'Pedidos Avaliados' =
-			
-			DISTINCTCOUNT(ft_avaliacoes_seller[order_id])
-		formatString: 0
-		displayFolder: 01_Base
-		lineageTag: 7e873f7a-bf22-4f51-9f30-2c81eb3e57dc
-
-	measure 'Valor Perspectiva Categoria' =
-			
-			SWITCH (
-			    SELECTEDVALUE ( Perspectiva[Ordem], 1 ),
-			    1, [Faturamento],
-			    2, [Volume Itens],
-			    3, [Nota Ajustada Categoria]
+			COUNTROWS (
+			    FILTER ( SUMMARIZE ( ft_vendas, ft_vendas[order_id], ft_vendas[nota_pedido] ), NOT ISBLANK ( ft_vendas[nota_pedido] ) )
 			)
-		lineageTag: 04b054d9-fe94-4a15-b6a8-9b72ff9babb4
+		formatString: #,0
+		displayFolder: 02 Nota
+		lineageTag: 9accd83e-2a3c-45bd-a4c6-3c85f64ee884
 
-		formatStringDefinition =
-				SWITCH ( SELECTEDVALUE ( Perspectiva[Ordem], 1 ),
-				    1, "R$ #,0", 2, "#,0", 3, "0.00" )
+	measure 'Faturamento Mi' = DIVIDE ( [Faturamento], 1000000 )
+		formatString: #,0.0
+		displayFolder: 01 Base
+		lineageTag: e5c487f3-60bc-48d2-ac35-b0ab2b9bbe3a
 
-	measure 'Valor Perspectiva Seller' =
-			
-			SWITCH (
-			    SELECTEDVALUE ( 'Perspectiva Seller'[Ordem], 1 ),
-			    1, [Faturamento],
-			    2, [Volume Itens],
-			    3, [Nota Ajustada Seller]
+	measure 'Faturamento mil' = DIVIDE ( [Faturamento], 1000 )
+		formatString: #,0
+		displayFolder: 01 Base
+		lineageTag: 9e93371e-4423-4f5f-b867-753d5d3e1f63
+
+	measure Itens = SUM ( ft_vendas[itens] )
+		formatString: #,0
+		displayFolder: 01 Base
+		lineageTag: 4364594b-7e86-4a23-878b-41304be2738e
+
+	measure 'Ticket Médio' = DIVIDE ( [Faturamento], [Pedidos] )
+		formatString: "R$ "#,0
+		displayFolder: 01 Base
+		lineageTag: 967278b6-50a7-439c-a2ad-f5d63e079ffb
+
+	measure Sellers = DISTINCTCOUNT ( ft_vendas[seller_id] )
+		formatString: #,0
+		displayFolder: 01 Base
+		lineageTag: 192256f5-fae2-4006-be2a-d7f9ac6918c2
+
+	measure 'Crescimento Mensal' =
+			VAR _f17 = CALCULATE ( [Faturamento], REMOVEFILTERS ( dm_data ), dm_data[year] = 2017 )
+			VAR _f18 = CALCULATE ( [Faturamento], REMOVEFILTERS ( dm_data ), dm_data[year] = 2018 )
+			VAR _m17 = CALCULATE ( COUNTROWS ( SUMMARIZE ( ft_vendas, dm_data[year_month] ) ), REMOVEFILTERS ( dm_data ), dm_data[year] = 2017 )
+			VAR _m18 = CALCULATE ( COUNTROWS ( SUMMARIZE ( ft_vendas, dm_data[year_month] ) ), REMOVEFILTERS ( dm_data ), dm_data[year] = 2018 )
+			RETURN DIVIDE ( DIVIDE ( _f18, _m18 ), DIVIDE ( _f17, _m17 ) ) - 1
+		formatString: +0%;-0%
+		displayFolder: 01 Base
+		lineageTag: d8774a7c-1b26-4795-927c-5d26eaae4011
+
+	measure '% Faturamento Top 10%' =
+			VAR _sellers = FILTER ( ALLSELECTED ( dm_seller[seller_id] ), [Faturamento] > 0 )
+			VAR _top = TOPN ( ROUNDUP ( COUNTROWS ( _sellers ) * 0.10, 0 ), _sellers, [Faturamento], DESC )
+			RETURN DIVIDE ( SUMX ( _top, [Faturamento] ), CALCULATE ( [Faturamento], ALLSELECTED ( dm_seller[seller_id] ) ) )
+		formatString: 0%
+		displayFolder: 01 Base
+		lineageTag: 23f0f1a8-f768-4d08-9785-83e81f1590a3
+
+	measure 'Nota Média' =
+			AVERAGEX (
+			    FILTER ( SUMMARIZE ( ft_vendas, ft_vendas[order_id], ft_vendas[nota_pedido] ), NOT ISBLANK ( ft_vendas[nota_pedido] ) ),
+			    ft_vendas[nota_pedido]
 			)
-		lineageTag: 1cc484b0-c05c-486a-916c-ba82dab54681
+		formatString: 0.00
+		displayFolder: 02 Nota
+		lineageTag: 5de2a23f-d59a-4ecb-b2f0-3467cac3e9b6
 
-		formatStringDefinition =
-				SWITCH ( SELECTEDVALUE ( 'Perspectiva Seller'[Ordem], 1 ),
-				    1, "R$ #,0", 2, "#,0", 3, "0.00" )
+	measure '% Notas 1' =
+			VAR _p = FILTER ( SUMMARIZE ( ft_vendas, ft_vendas[order_id], ft_vendas[nota_pedido] ), NOT ISBLANK ( ft_vendas[nota_pedido] ) )
+			RETURN DIVIDE ( COUNTROWS ( FILTER ( _p, ROUND ( ft_vendas[nota_pedido], 0 ) = 1 ) ) + 0, COUNTROWS ( _p ) )
+		formatString: 0.0%
+		displayFolder: 02 Nota
+		lineageTag: 2616e254-5503-4392-b051-72505b4fc8e2
 
-	measure 'Nota Média Geral' =
-			
-			AVERAGEX(
-			    SUMMARIZE(
-			        ft_avaliacoes_seller,
-			        ft_avaliacoes_seller[order_id],
-			        "NotaPedido",
-			        MAX(ft_avaliacoes_seller[review_score_order])
+	measure 'Nota No Prazo' = CALCULATE ( [Nota Média], ft_vendas[atrasado] = 0 )
+		formatString: 0.00
+		displayFolder: 02 Nota
+		lineageTag: 7180313f-e5eb-4c82-9876-0e9348820a72
+
+	measure 'Nota Atrasado' = CALCULATE ( [Nota Média], ft_vendas[atrasado] = 1 )
+		formatString: 0.00
+		displayFolder: 02 Nota
+		lineageTag: 323aec53-2891-46ee-bd99-b9ce5f6160d8
+
+	measure '% Notas 1 No Prazo' = CALCULATE ( [% Notas 1], ft_vendas[atrasado] = 0 )
+		formatString: 0.0%
+		displayFolder: 02 Nota
+		lineageTag: 36e346c4-0bcc-4518-9b50-1ca8b1d30706
+
+	measure '% Notas 1 Atrasado' = CALCULATE ( [% Notas 1], ft_vendas[atrasado] = 1 )
+		formatString: 0%
+		displayFolder: 02 Nota
+		lineageTag: ec2cf1e4-9029-4502-aec3-5e5780db7ddc
+
+	measure '% Notas 1 de Atrasos' =
+			VAR _p =
+			    FILTER (
+			        SUMMARIZE ( ft_vendas, ft_vendas[order_id], ft_vendas[nota_pedido], ft_vendas[atrasado] ),
+			        NOT ISBLANK ( ft_vendas[atrasado] ) && ROUND ( ft_vendas[nota_pedido], 0 ) = 1
+			    )
+			RETURN DIVIDE ( COUNTROWS ( FILTER ( _p, ft_vendas[atrasado] = 1 ) ) + 0, COUNTROWS ( _p ) )
+		formatString: 0%
+		displayFolder: 02 Nota
+		lineageTag: 19e26c2c-9c82-4558-85a1-9d88e2f8446e
+
+	measure 'Pedidos Analisados' =
+			COUNTROWS (
+			    FILTER (
+			        SUMMARIZE ( ft_vendas, ft_vendas[order_id], ft_vendas[nota_pedido], ft_vendas[atrasado] ),
+			        NOT ISBLANK ( ft_vendas[nota_pedido] ) && NOT ISBLANK ( ft_vendas[atrasado] )
+			    )
+			)
+		formatString: #,0
+		displayFolder: 03 Entrega
+		lineageTag: b2dfa1bf-06ce-44e0-8343-c4d449d574f5
+
+	measure '% Atraso' =
+			VAR _p =
+			    FILTER (
+			        SUMMARIZE ( ft_vendas, ft_vendas[order_id], ft_vendas[nota_pedido], ft_vendas[atrasado] ),
+			        NOT ISBLANK ( ft_vendas[nota_pedido] ) && NOT ISBLANK ( ft_vendas[atrasado] )
+			    )
+			RETURN DIVIDE ( COUNTROWS ( FILTER ( _p, ft_vendas[atrasado] = 1 ) ) + 0, COUNTROWS ( _p ) )
+		formatString: 0.0%
+		displayFolder: 03 Entrega
+		lineageTag: d9ef80c6-d163-4d2a-9f14-4d67e68e7656
+
+	measure 'Prazo Médio' =
+			AVERAGEX (
+			    FILTER (
+			        SUMMARIZE ( ft_vendas, ft_vendas[order_id], ft_vendas[nota_pedido], ft_vendas[prazo_entrega_dias] ),
+			        NOT ISBLANK ( ft_vendas[nota_pedido] ) && NOT ISBLANK ( ft_vendas[prazo_entrega_dias] )
 			    ),
-			    [NotaPedido]
+			    ft_vendas[prazo_entrega_dias]
 			)
-		displayFolder: 01_Base
-		lineageTag: 193d2ebb-6b60-4e9f-9d37-b326ed377e30
+		formatString: 0.0" dias"
+		displayFolder: 03 Entrega
+		lineageTag: 70667b6a-8156-4c3a-801b-4f2773991a0e
 
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
+	measure 'Prazo Médio UF' = IF ( [Pedidos Analisados] >= 300, [Prazo Médio] )
+		formatString: 0.0
+		displayFolder: 03 Entrega
+		lineageTag: 7feeb114-1e88-42b0-88ef-763df4451c73
 
-	measure 'Faturamento Top 10% Sellers' =
-			
-			VAR SellersAtivos =
-			    FILTER(
-			        ALLSELECTED(dm_seller[seller_id]),
-			        CALCULATE([Faturamento]) > 0
-			    )
-			
-			VAR QuantidadeSellers =
-			    COUNTROWS(SellersAtivos)
-			
-			VAR QuantidadeTop10 =
-			    ROUNDUP(
-			        QuantidadeSellers * 0.10,
-			        0
-			    )
-			
-			VAR TopSellers =
-			    TOPN(
-			        QuantidadeTop10,
-			        SellersAtivos,
-			        [Faturamento],
-			        DESC
-			    )
-			
-			RETURN
-			    SUMX(
-			        TopSellers,
-			        CALCULATE([Faturamento])
-			    )
-		displayFolder: 02_Sellers
-		lineageTag: cf9bf041-7b4c-4a98-b409-52c92ed21976
+	measure 'Nota da Faixa' = IF ( NOT ISBLANK ( SELECTEDVALUE ( ft_vendas[faixa_prazo] ) ), [Nota Média] )
+		formatString: 0.00
+		displayFolder: 03 Entrega
+		lineageTag: 0769c90e-a54e-456d-b7fd-9660365cae02
 
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
+	measure 'Nota da Faixa Seller' = IF ( NOT ISBLANK ( SELECTEDVALUE ( ft_vendas[faixa_prazo_seller] ) ), [Nota Média] )
+		formatString: 0.00
+		displayFolder: 03 Entrega
+		lineageTag: f9f44f56-ca2d-411e-b4ef-994903fabb6a
 
-	measure '% Faturamento Top 10% Sellers' =
-			
-			VAR FaturamentoTotal =
-			    CALCULATE(
-			        [Faturamento],
-			        ALLSELECTED(dm_seller[seller_id])
-			    )
-			
-			RETURN
-			    DIVIDE(
-			        [Faturamento Top 10% Sellers],
-			        FaturamentoTotal
-			    )
-		formatString: 0.00%;-0.00%;0.00%
-		lineageTag: f17f6735-7215-443a-b51a-55beb6e9f30c
+	measure 'Dias Postagem' =
+			AVERAGEX (
+			    FILTER ( SUMMARIZE ( ft_vendas, ft_vendas[order_id], ft_vendas[dias_postagem] ), NOT ISBLANK ( ft_vendas[dias_postagem] ) ),
+			    ft_vendas[dias_postagem]
+			)
+		formatString: 0.0
+		displayFolder: 03 Entrega
+		lineageTag: d7ced64b-53fb-4c74-8385-ee4ecf330e36
 
-	measure 'Qtd Sellers Top 10%' =
-			
-			VAR SellersAtivos =
-			    FILTER(
-			        ALLSELECTED(dm_seller[seller_id]),
-			        CALCULATE([Faturamento]) > 0
-			    )
-			
-			RETURN
-			    ROUNDUP(
-			        COUNTROWS(SellersAtivos) * 0.10,
-			        0
-			    )
-		displayFolder: 02_Sellers
-		lineageTag: 7ad69dcd-19de-453e-b8fc-c7a47058c860
+	measure 'Dias Transporte' =
+			AVERAGEX (
+			    FILTER ( SUMMARIZE ( ft_vendas, ft_vendas[order_id], ft_vendas[dias_transporte] ), NOT ISBLANK ( ft_vendas[dias_transporte] ) ),
+			    ft_vendas[dias_transporte]
+			)
+		formatString: 0.0
+		displayFolder: 03 Entrega
+		lineageTag: a77575a0-ccb2-4979-9c1d-58cd8798307e
 
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
+	measure '% Atrasos do Seller' =
+			VAR _p =
+			    FILTER (
+			        SUMMARIZE ( ft_vendas, ft_vendas[order_id], ft_vendas[atrasado], ft_vendas[seller_postou_atrasado] ),
+			        ft_vendas[atrasado] = 1
+			    )
+			RETURN DIVIDE ( COUNTROWS ( FILTER ( _p, ft_vendas[seller_postou_atrasado] = 1 ) ) + 0, COUNTROWS ( _p ) )
+		formatString: 0%
+		displayFolder: 03 Entrega
+		lineageTag: a23a2207-9cd8-4a7d-8f46-a16b15a1d1e7
 
-	measure 'Pedidos Seller' =
-			
-			DISTINCTCOUNT(ft_vendas[order_id])
+	measure '% Atrasos do Transporte' = IF ( NOT ISBLANK ( [% Atrasos do Seller] ), 1 - [% Atrasos do Seller] )
+		formatString: 0%
+		displayFolder: 03 Entrega
+		lineageTag: d933fb72-ec6c-4ade-9465-d7106362e7e8
+
+	measure 'Faturamento mil 30+' = IF ( [Pedidos Avaliados] >= 30, [Faturamento mil] )
+		formatString: """R$ ""#,0"" mil"""
+		displayFolder: 04 Sellers e categorias
+		lineageTag: 9591eb26-0c7e-4672-ae26-fe3b229a42c7
+
+	measure 'Nota Média do Grupo' =
+			IF (
+			    NOT ISBLANK ( SELECTEDVALUE ( dm_seller[Grupo Atraso Ordem] ) ),
+			    AVERAGEX ( VALUES ( dm_seller[seller_id] ), [Nota Média] )
+			)
+		formatString: 0.00
+		displayFolder: 04 Sellers e categorias
+		lineageTag: 419d26ff-8ebf-422f-992c-f33d8a67a7c3
+
+	measure 'Posição Faturamento' = IF ( [Faturamento] > 0, RANKX ( ALL ( dm_seller ), [Faturamento], , DESC ) )
 		formatString: 0
-		displayFolder: 02_Sellers
-		lineageTag: b9d77355-5798-4838-94af-bc6f981425c0
+		displayFolder: 04 Sellers e categorias
+		lineageTag: 6ab31520-51af-407d-941d-16a2ea19b26b
 
-	measure 'Qtd Seller-Pedidos' =
-			
-			CALCULATE(
-			    SUMX(
-			        VALUES(dm_seller[seller_id]),
-			        CALCULATE(
-			            DISTINCTCOUNT(ft_vendas[order_id])
-			        )
-			    ),
-			    REMOVEFILTERS(dm_seller)
+	measure 'Campeã Faturamento' =
+			VAR _c = TOPN ( 1, CALCULATETABLE ( VALUES ( dm_categoria[categoria] ), dm_categoria[ranking_eligible] = TRUE () ), [Faturamento], DESC )
+			RETURN MAXX ( _c, dm_categoria[categoria] & " · R$ " & FORMAT ( [Faturamento mil], "#,0" ) & " mil" )
+		displayFolder: 04 Sellers e categorias
+		lineageTag: ae909d1c-0075-4de1-af3e-9b09f9fb6e27
+
+	measure 'Campeã Itens' =
+			VAR _c = TOPN ( 1, CALCULATETABLE ( VALUES ( dm_categoria[categoria] ), dm_categoria[ranking_eligible] = TRUE () ), [Itens], DESC )
+			RETURN MAXX ( _c, dm_categoria[categoria] & " · " & FORMAT ( [Itens], "#,0" ) & " itens" )
+		displayFolder: 04 Sellers e categorias
+		lineageTag: d7bd3a6c-e4c1-4a53-a2df-e2ce4b25c9a7
+
+	measure 'Campeã Nota' =
+			VAR _elegiveis =
+			    FILTER (
+			        CALCULATETABLE ( VALUES ( dm_categoria[categoria] ), dm_categoria[ranking_eligible] = TRUE () ),
+			        [Pedidos Avaliados] >= 30
+			    )
+			VAR _c = TOPN ( 1, _elegiveis, [Nota Ajustada Categoria], DESC )
+			RETURN MAXX ( _c, dm_categoria[categoria] & " · " & FORMAT ( [Nota Ajustada Categoria], "0.00" ) )
+		displayFolder: 04 Sellers e categorias
+		lineageTag: 166ba400-0526-4952-a667-d43af61dc00b
+
+	measure 'Ticket Médio Rede' = CALCULATE ( [Ticket Médio], REMOVEFILTERS ( dm_seller ) )
+		formatString: "R$ "#,0
+		displayFolder: 05 Rede
+		lineageTag: fd4ede10-55e2-4199-90f2-c58ec1fcf454
+
+	measure 'Nota Média Rede' = CALCULATE ( [Nota Média], REMOVEFILTERS ( dm_seller ) )
+		formatString: 0.00
+		displayFolder: 05 Rede
+		lineageTag: 30afef62-8060-4aa7-abf1-05526131ed2a
+
+	measure '% Atraso Rede' = CALCULATE ( [% Atraso], REMOVEFILTERS ( dm_seller ) )
+		formatString: 0.0%
+		displayFolder: 05 Rede
+		lineageTag: 7a16d5a9-d337-40fa-8012-829a73240138
+
+	measure 'Prazo Médio Rede' = CALCULATE ( [Prazo Médio], REMOVEFILTERS ( dm_seller ) )
+		formatString: 0.0" dias"
+		displayFolder: 05 Rede
+		lineageTag: 8f07db72-11b6-443c-a332-ea776e9a92a4
+
+	measure 'Sellers Rede' = CALCULATE ( [Sellers], REMOVEFILTERS ( dm_seller ) )
+		formatString: #,0
+		displayFolder: 05 Rede
+		lineageTag: cedfd01f-a2f4-4a3c-991a-08e811f812b7
+
+	measure 'Ticket vs Rede' = DIVIDE ( [Ticket Médio], [Ticket Médio Rede] ) - 1
+		formatString: +0%;-0%
+		displayFolder: 05 Rede
+		lineageTag: b68e47dd-5dd4-43e7-bb54-0098396758b1
+
+	measure 'Nota vs Rede' = [Nota Ajustada Seller] - [Nota Média Rede]
+		formatString: +0.00;-0.00
+		displayFolder: 05 Rede
+		lineageTag: 1cb21ff8-0179-4c17-a539-dfcd211f33f1
+
+	measure 'Atraso vs Rede' = [% Atraso] - [% Atraso Rede]
+		formatString: +0.0%;-0.0%
+		displayFolder: 05 Rede
+		lineageTag: 3f0ccb7e-2534-4ecc-a588-d7c4245731b3
+
+	measure 'Txt Resposta' =
+			"Não. Faturamento e nota quase não se relacionam. O que decide a nota é a entrega: pedido atrasado recebe "
+			    & FORMAT ( [Nota Atrasado], "0.00" ) & ", contra " & FORMAT ( [Nota No Prazo], "0.00" ) & " no prazo."
+		displayFolder: 10 Textos
+		lineageTag: 5e0d5379-f972-49ba-a333-173ada74fbd4
+
+	measure 'Txt KPI Faturamento' =
+			IF (
+			    [Faturamento] >= 1000000,
+			    "R$ " & FORMAT ( [Faturamento Mi], "0.00" ) & " Mi",
+			    "R$ " & FORMAT ( [Faturamento mil], "#,0" ) & " mil"
 			)
-		formatString: 0
-		displayFolder: 02_Sellers
-		lineageTag: cd3c445f-f75d-49d7-b705-b56e2b73849c
+		displayFolder: 10 Textos
+		lineageTag: 47efc0ab-08c6-435b-9792-5efd88d9de4a
 
-	measure 'Ticket Médio Global Sellers' =
-			
-			VAR ReceitaGlobal =
-			    CALCULATE(
-			        [Faturamento],
-			        REMOVEFILTERS(dm_seller)
-			    )
-			
+	measure 'Txt Pill Crescimento' = FORMAT ( [Crescimento Mensal], "+0%;-0%" )
+		displayFolder: 10 Textos
+		lineageTag: 0b1139a7-034d-4e3d-8d0e-e57b1194280b
+
+	measure 'Txt KPI Pedidos' = IF ( [Pedidos] >= 10000, FORMAT ( [Pedidos] / 1000, "#,0.0" ) & " mil", FORMAT ( [Pedidos], "#,0" ) )
+		displayFolder: 10 Textos
+		lineageTag: 6c887108-6397-44b9-8258-750e0da91779
+
+	measure 'Txt Ctx Ticket' = "Ticket médio R$ " & FORMAT ( [Ticket Médio], "#,0" )
+		displayFolder: 10 Textos
+		lineageTag: 7a63939b-a324-41e6-8bd9-cd4cf9fe6644
+
+	measure 'Txt KPI Nota' = FORMAT ( [Nota Média], "0.00" )
+		displayFolder: 10 Textos
+		lineageTag: 9a8805c9-11e4-45d2-92c6-46547f53e488
+
+	measure 'Txt Pill Notas 1' = FORMAT ( [% Notas 1], "0.0%" )
+		displayFolder: 10 Textos
+		lineageTag: 4afdefd6-b566-4913-ad8e-5fd6ee578397
+
+	measure 'Txt KPI Atraso' = FORMAT ( [% Atraso], "0.0%" )
+		displayFolder: 10 Textos
+		lineageTag: e7a213a2-4363-45f2-a2f3-6de62cb4b411
+
+	measure 'Txt Pill Nota Atrasado' = FORMAT ( [Nota Atrasado], "0.00" )
+		displayFolder: 10 Textos
+		lineageTag: b26017f0-701a-47c6-8237-3087b2b0de92
+
+	measure 'Txt KPI Sellers' = FORMAT ( [Sellers], "#,0" )
+		displayFolder: 10 Textos
+		lineageTag: 4079995a-4aef-4af5-b934-cc75f3cc56e5
+
+	measure 'Txt Ctx Top 10' = "10% maiores = " & FORMAT ( [% Faturamento Top 10%], "0%" ) & " do faturamento"
+		displayFolder: 10 Textos
+		lineageTag: ba674ae3-719e-490e-98cd-d7e551004584
+
+	measure 'Txt Titulo Contexto' = "O marketplace cresceu " & FORMAT ( [Crescimento Mensal], "0%" ) & " por mês, e os campeões mudam conforme a métrica"
+		displayFolder: 10 Textos
+		lineageTag: 3b2dbb0b-f8ae-4d68-b0ec-c4ef14f0e42e
+
+	measure 'Txt Titulo Vender' =
+			VAR _top20 = TOPN ( 20, FILTER ( VALUES ( dm_seller[seller_id] ), [Faturamento] > 0 ), [Faturamento], DESC )
+			VAR _media = [Nota Média]
+			VAR _abaixo = COUNTROWS ( FILTER ( _top20, [Nota Média] < _media ) )
+			VAR _total = COUNTROWS ( _top20 )
 			RETURN
-			    DIVIDE(
-			        ReceitaGlobal,
-			        [Qtd Seller-Pedidos]
+			    IF (
+			        _abaixo > 0,
+			        _abaixo & " dos " & _total & " sellers que mais faturam têm nota abaixo da média",
+			        "Os " & _total & " sellers que mais faturam têm nota acima da média"
 			    )
-		displayFolder: 02_Sellers
-		lineageTag: aaaaac50-55de-489c-a713-663bb5be9d09
+		displayFolder: 10 Textos
+		lineageTag: 129bdd03-22b5-4b8f-893d-9d63f0a44080
 
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
+	measure 'Txt Titulo Nota' =
+			"Atrasos são " & FORMAT ( [% Atraso], "0.0%" ) & " dos pedidos, mas geram "
+			    & FORMAT ( [% Notas 1 de Atrasos], "0%" ) & " de todas as notas 1"
+		displayFolder: 10 Textos
+		lineageTag: 2d41e66e-8d88-4b17-baff-5e0333cb5b56
 
-	measure 'Ticket Médio Ajustado' =
-			
-			VAR N =
-			    [Pedidos Seller]
-			
-			VAR TicketSeller =
-			    [Ticket Médio Seller]
-			
-			VAR TicketGlobal =
-			    [Ticket Médio Global Sellers]
-			
-			VAR M =
-			    0.8398
-			
-			VAR PesoSeller =
-			    DIVIDE(
-			        N,
-			        N + M
-			    )
-			
+	measure 'Txt Titulo Regiao' =
+			VAR _t = FILTER ( ADDCOLUMNS ( VALUES ( dm_cliente_uf[regiao] ), "@prazo", [Prazo Médio], "@atraso", [% Atraso] ), NOT ISBLANK ( [@prazo] ) )
+			VAR _pior = TOPN ( 1, _t, [@atraso], DESC )
+			VAR _melhor = TOPN ( 1, _t, [@prazo], ASC )
+			VAR _nomePior = MAXX ( _pior, dm_cliente_uf[regiao] )
+			VAR _prazoPior = MAXX ( _pior, [@prazo] )
+			VAR _nomeMelhor = MAXX ( _melhor, dm_cliente_uf[regiao] )
+			VAR _razao = DIVIDE ( _prazoPior, MAXX ( _melhor, [@prazo] ) )
 			RETURN
-			    IF(
-			        N = 0,
-			        BLANK(),
-			        PesoSeller * TicketSeller
-			            + (1 - PesoSeller) * TicketGlobal
+			    IF (
+			        COUNTROWS ( _t ) <= 1 || _nomePior = _nomeMelhor,
+			        "O cliente do " & _nomePior & " espera " & FORMAT ( _prazoPior, "0.0" ) & " dias pela entrega",
+			        "O cliente do " & _nomePior & " espera " & FORMAT ( _prazoPior, "0.0" ) & " dias, "
+			            & SWITCH ( TRUE (), _razao >= 2.1, "mais que o dobro do ", _razao >= 1.75, "quase o dobro do ", FORMAT ( _razao, "0.0" ) & "× o prazo do " )
+			            & _nomeMelhor
 			    )
-		displayFolder: 02_Sellers
-		lineageTag: 2800cae5-6d89-4575-8921-3b351f14ac0c
+		displayFolder: 10 Textos
+		lineageTag: 43ff69c2-c300-40b9-b4ca-f183df6529bf
 
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
+	measure 'Txt Nota No Prazo' = FORMAT ( [Nota No Prazo], "0.00" )
+		displayFolder: 10 Textos
+		lineageTag: 6d1c4349-de96-4463-a97c-86118b1993e2
 
-	measure '% Notas 1 a 3' =
-			
-			VAR PedidosAvaliados =
-			    SUMMARIZE(
-			        ft_avaliacoes_seller,
-			        ft_avaliacoes_seller[order_id],
-			        "Nota",
-			        MAX(ft_avaliacoes_seller[review_score_order])
-			    )
-			
-			VAR QtdNotas1a3 =
-			    COUNTROWS(
-			        FILTER(
-			            PedidosAvaliados,
-			            [Nota] >= 1 &&
-			            [Nota] <= 3.9
-			        )
-			    )
-			
-			RETURN
-			    DIVIDE(
-			        QtdNotas1a3,
-			        COUNTROWS(PedidosAvaliados)
-			    )
-		formatString: 0.00%;-0.00%;0.00%
-		lineageTag: 0e0f01fa-e32f-40d8-9f17-f605a669e279
+	measure 'Txt Nota Atrasado' = FORMAT ( [Nota Atrasado], "0.00" )
+		displayFolder: 10 Textos
+		lineageTag: 8c16f3dd-6c69-412d-9e1e-760f3bb6848a
 
-	measure '% Notas 4 a 5' =
-			
-			VAR PedidosAvaliados =
-			    SUMMARIZE(
-			        ft_avaliacoes_seller,
-			        ft_avaliacoes_seller[order_id],
-			        "Nota",
-			        MAX(ft_avaliacoes_seller[review_score_order])
-			    )
-			
-			VAR QtdNotas4a5 =
-			    COUNTROWS(
-			        FILTER(
-			            PedidosAvaliados,
-			            [Nota] >= 4 &&
-			            [Nota] <= 5
-			        )
-			    )
-			
-			RETURN
-			    DIVIDE(
-			        QtdNotas4a5,
-			        COUNTROWS(PedidosAvaliados)
-			    )
-		formatString: 0.00%;-0.00%;0.00%
-		lineageTag: 0b22995c-402b-44d7-8089-ace3de0f2060
+	measure 'Txt Ctx No Prazo' = "nota média · " & FORMAT ( [% Notas 1 No Prazo], "0.0%" ) & " de notas 1"
+		displayFolder: 10 Textos
+		lineageTag: 79cde4c3-bc47-4c5c-8a4a-aee535c6a23f
 
-	measure '% Pedidos Avaliados' =
-			
-			DIVIDE (
-			    [Pedidos Avaliados],
-			    CALCULATE ( [Pedidos Avaliados], REMOVEFILTERS ( ft_avaliacoes_seller[review_score_order] ) )
+	measure 'Txt Ctx Atrasado' = "nota média · " & FORMAT ( [% Notas 1 Atrasado], "0%" ) & " de notas 1"
+		displayFolder: 10 Textos
+		lineageTag: c03bfb90-8b86-4206-af51-21d81ecb6e13
+
+	measure 'Txt Postagem No Prazo' = FORMAT ( CALCULATE ( [Dias Postagem], ft_vendas[atrasado] = 0 ), "0.0" )
+		displayFolder: 10 Textos
+		lineageTag: f55cbcba-a345-4177-acb8-66a8b697f106
+
+	measure 'Txt Postagem Atrasado' = FORMAT ( CALCULATE ( [Dias Postagem], ft_vendas[atrasado] = 1 ), "0.0" )
+		displayFolder: 10 Textos
+		lineageTag: 4361e5cd-5af7-48f8-aa87-8fc154808f46
+
+	measure 'Txt Transporte No Prazo' = FORMAT ( CALCULATE ( [Dias Transporte], ft_vendas[atrasado] = 0 ), "0.0" )
+		displayFolder: 10 Textos
+		lineageTag: b0afe8d2-e7e9-4303-af4c-7ed6ed09d2e9
+
+	measure 'Txt Transporte Atrasado' = FORMAT ( CALCULATE ( [Dias Transporte], ft_vendas[atrasado] = 1 ), "0.0" )
+		displayFolder: 10 Textos
+		lineageTag: ad762eef-244e-4504-9792-7a9a1b402941
+
+	measure 'Txt Leitura Etapas' =
+			IF (
+			    [% Atrasos do Transporte] >= 0.5,
+			    "O gargalo é o transporte: em " & FORMAT ( [% Atrasos do Transporte], "0%" ) & " dos atrasos, o seller postou no prazo.",
+			    "O gargalo é a postagem: em " & FORMAT ( [% Atrasos do Seller], "0%" ) & " dos atrasos, o seller postou depois do limite."
 			)
-		lineageTag: 3e586ea6-c430-4e13-a462-6fadcecc3a24
+		displayFolder: 10 Textos
+		lineageTag: bfd64138-1d48-4c86-8cec-a568a1827a70
 
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
+	measure 'Txt Dica Estado' = SELECTEDVALUE ( dm_cliente_uf[estado] ) & " (" & SELECTEDVALUE ( dm_cliente_uf[uf] ) & ")"
+		displayFolder: 10 Textos
+		lineageTag: 8627e09b-414a-41f4-a561-441f01d2d572
+
+	measure 'Txt Dica Sub' = "Região " & SELECTEDVALUE ( dm_cliente_uf[regiao] ) & " · " & FORMAT ( [Pedidos Analisados], "#,0" ) & " pedidos avaliados"
+		displayFolder: 10 Textos
+		lineageTag: 5d1edebe-e631-4419-b834-e7525e0b6e8b
+
+	measure 'Txt Dica Prazo' = FORMAT ( [Prazo Médio], "0.0" ) & " dias"
+		displayFolder: 10 Textos
+		lineageTag: aa0d5cf6-6049-48ce-ba88-fdd0b7f2f453
+
+	measure 'Txt Dica Atraso' = FORMAT ( [% Atraso], "0.0%" )
+		displayFolder: 10 Textos
+		lineageTag: 703c6471-3c19-4dfa-9b94-6c9a060c1007
+
+	measure 'Txt Dica Nota' = FORMAT ( [Nota Média], "0.00" )
+		displayFolder: 10 Textos
+		lineageTag: a365e5ed-e151-48b9-b4f4-559bd3bc9e7e
+
+	measure 'Txt Titulo Seller' =
+			VAR _uf = SELECTEDVALUE ( dm_seller[seller_state] )
+			VAR _estado = LOOKUPVALUE ( dm_cliente_uf[estado], dm_cliente_uf[uf], _uf )
+			RETURN
+			    "Seller " & LEFT ( SELECTEDVALUE ( dm_seller[seller_id] ), 6 ) & " · " & _estado & " (" & _uf & ") · "
+			        & FORMAT ( [Pedidos], "#,0" ) & " pedidos"
+		displayFolder: 10 Textos
+		lineageTag: e302654c-e4a6-42f2-bf9d-03addf66ac58
+
+	measure 'Txt Ctx Posicao' = FORMAT ( [Posição Faturamento], "0" ) & "º lugar entre " & FORMAT ( [Sellers Rede], "#,0" ) & " sellers"
+		displayFolder: 10 Textos
+		lineageTag: 2f91317e-47df-4b62-b33a-83acdd67946c
+
+	measure 'Txt KPI Ticket' = "R$ " & FORMAT ( [Ticket Médio], "#,0" )
+		displayFolder: 10 Textos
+		lineageTag: 56a6abf2-7b32-4819-9e5d-7b9ac3ca7f66
+
+	measure 'Txt Ctx Ticket Rede' = "Rede: R$ " & FORMAT ( [Ticket Médio Rede], "#,0" )
+		displayFolder: 10 Textos
+		lineageTag: 59babda3-633e-47c8-a415-df3aafc50ec6
+
+	measure 'Txt Pill Ticket' = FORMAT ( [Ticket vs Rede], "+0%;-0%" )
+		displayFolder: 10 Textos
+		lineageTag: ab9229f9-a7c9-4b40-ab4f-76505d5b4933
+
+	measure 'Txt KPI Nota Seller' = FORMAT ( [Nota Ajustada Seller], "0.00" )
+		displayFolder: 10 Textos
+		lineageTag: 72b5b669-a4a1-4b22-9dca-1ca536a42b8b
+
+	measure 'Txt Ctx Nota Rede' = "Rede: " & FORMAT ( [Nota Média Rede], "0.00" )
+		displayFolder: 10 Textos
+		lineageTag: a0fccd72-6a19-48a0-bb22-5f08f20a6307
+
+	measure 'Txt Pill Nota' = FORMAT ( [Nota vs Rede], "+0.00;−0.00;0.00" )
+		displayFolder: 10 Textos
+		lineageTag: c29535bc-9601-4cd0-849f-7010a32d7b37
+
+	measure 'Txt Ctx Atraso Rede' = "Rede: " & FORMAT ( [% Atraso Rede], "0.0%" )
+		displayFolder: 10 Textos
+		lineageTag: c54e7896-6c27-4780-868f-fcd76ddc7344
+
+	measure 'Txt Pill Atraso' = FORMAT ( [Atraso vs Rede] * 100, "+0.0;−0.0;0.0" ) & " p.p."
+		displayFolder: 10 Textos
+		lineageTag: 75b9730c-812e-43eb-a41c-19a70eea3077
+
+	measure 'Txt KPI Prazo' = FORMAT ( [Prazo Médio], "0.0" ) & " dias"
+		displayFolder: 10 Textos
+		lineageTag: c899c3bb-87e4-4882-b275-5fc77f6e9b05
+
+	measure 'Txt Ctx Prazo Rede' = "Rede: " & FORMAT ( [Prazo Médio Rede], "0.0" ) & " dias"
+		displayFolder: 10 Textos
+		lineageTag: 231540d4-0c4f-4cd0-931e-0857a02a16ed
+
+	measure 'Txt Perfil Seller' =
+			VAR _pos = [Posição Faturamento]
+			VAR _topo = _pos <= ROUNDUP ( [Sellers Rede] * 0.10, 0 )
+			VAR _nota = [Nota vs Rede]
+			VAR _porte = IF ( _topo, "Vende muito", "Vende pouco" )
+			VAR _qual = SWITCH ( TRUE (), _nota >= 0.05, "nota acima da média", _nota <= -0.05, "nota abaixo da média", "nota na média" )
+			VAR _ticket = [Ticket vs Rede]
+			RETURN
+			    _porte & ", " & _qual & ": " & _pos & "º em faturamento, com ticket "
+			        & IF ( ABS ( _ticket ) < 0.05, "próximo da rede.", FORMAT ( ABS ( _ticket ), "0%" ) & IF ( _ticket > 0, " acima", " abaixo" ) & " da rede." )
+		displayFolder: 10 Textos
+		lineageTag: 9fd602cd-e046-432a-b1b7-c001791c66ce
+
+	measure 'Txt Atencao Seller' =
+			VAR _a = [% Atraso]
+			VAR _ar = [% Atraso Rede]
+			VAR _p = [Prazo Médio]
+			VAR _pr = [Prazo Médio Rede]
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        _a > _ar * 1.3, "Atraso de " & FORMAT ( _a, "0.0%" ) & ", acima da rede (" & FORMAT ( _ar, "0.0%" ) & "). É o que mais pesa na nota.",
+			        _p > _pr * 1.2, "Prazo médio de " & FORMAT ( _p, "0.0" ) & " dias, acima da rede (" & FORMAT ( _pr, "0.0" ) & "): o cliente espera mais.",
+			        [Nota vs Rede] <= -0.05, "Nota abaixo da média mesmo com entrega em dia: olhar produto, descrição e atendimento.",
+			        "Nenhum ponto crítico: atraso e prazo dentro da média da rede."
+			    )
+		displayFolder: 10 Textos
+		lineageTag: f0b76eae-a5ca-4b62-b369-044f55a9508c
+
+	measure 'Txt Acao Seller' =
+			VAR _atrasa = [% Atraso] > [% Atraso Rede] * 1.3
+			VAR _topo = [Posição Faturamento] <= ROUNDUP ( [Sellers Rede] * 0.10, 0 )
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        _atrasa && _topo, "Plano de pontualidade antes de entrar no programa de sellers referência.",
+			        _atrasa, "Plano de pontualidade: revisar a postagem e as rotas com mais atraso.",
+			        [Nota vs Rede] <= -0.05, "Ler as avaliações negativas e corrigir produto ou anúncio.",
+			        _topo, "Candidato a seller referência: vende muito e entrega bem.",
+			        "Acompanhar: sem ação prioritária."
+			    )
+		displayFolder: 10 Textos
+		lineageTag: 30a2452b-b53e-4379-861c-c69d115fde0c
+
+	measure 'Cor Faturamento Mes' =
+			VAR _max = MAXX ( ALLSELECTED ( dm_data[Mes Ano], dm_data[year_month] ), [Faturamento] )
+			RETURN IF ( [Faturamento] = _max, "#1A6BF5", "#CFE0FF" )
+		displayFolder: 11 Cores
+		lineageTag: d9ec2ad8-5f9c-48e7-ad52-22119d22c515
+
+	measure 'Cor Faixa Prazo' = IF ( [Nota Média] < 4, "#1A6BF5", "#CFE0FF" )
+		displayFolder: 11 Cores
+		lineageTag: 005606e7-2de4-46f1-b528-568226054018
+
+	measure 'Cor Faixa Seller' = IF ( [Nota Média] < 3.5, "#FF3B3B", "#CFE0FF" )
+		displayFolder: 11 Cores
+		lineageTag: 61b90e23-cc22-49ad-a2e6-33878c921dc7
+
+	measure 'Cor Atraso Seller' = IF ( [% Atraso] > 0.10, "#FF3B3B", "#1A6BF5" )
+		displayFolder: 11 Cores
+		lineageTag: 66392822-cd0e-4e81-8c78-cfb995175564
+
+	measure 'Cor Grupo Atraso' = IF ( SELECTEDVALUE ( dm_seller[Grupo Atraso Ordem] ) = 4, "#FF3B3B", "#1A6BF5" )
+		displayFolder: 11 Cores
+		lineageTag: be0b2c0d-57cb-435c-9c0e-388917537fb4
+
+	measure 'Cor Prazo UF' = IF ( [Prazo Médio UF] > 18, "#FF3B3B", "#CFE0FF" )
+		displayFolder: 11 Cores
+		lineageTag: 6c4933e2-574e-4fb7-9cad-ea833b0cdbf2
+
+	measure 'Cor Nota Tabela' = IF ( [Nota Ajustada Seller] < [Nota Média Rede], "#C41F1F", "#00995A" )
+		displayFolder: 11 Cores
+		lineageTag: c9fb68d7-241b-4671-bd88-341010a71dc4
+
+	measure 'Cor Nota Regiao' = IF ( [Nota Média] < 4.1, "#C41F1F", "#111111" )
+		displayFolder: 11 Cores
+		lineageTag: 03eb5a0d-0293-4a4c-8f70-181df4e2a30d
+
+	measure 'Cor Atraso Tabela' = IF ( [% Atraso] > 0.10, "#C41F1F", "#3F3F3F" )
+		displayFolder: 11 Cores
+		lineageTag: 00b1d0b4-c0f7-4232-bfc4-f36acdbd5eca
+
+	measure 'Cor Pill Ticket' = IF ( [Ticket vs Rede] >= 0, "#00995A", "#C41F1F" )
+		displayFolder: 11 Cores
+		lineageTag: 383406c3-83ce-4f39-8300-160b4825fd2c
+
+	measure 'Cor Pill Nota' = IF ( [Nota vs Rede] >= 0, "#00995A", "#C41F1F" )
+		displayFolder: 11 Cores
+		lineageTag: af9f8dc4-b0e0-4c4b-b4f0-44594375a769
+
+	measure 'Cor Pill Atraso' = IF ( [Atraso vs Rede] <= 0, "#00995A", "#C41F1F" )
+		displayFolder: 11 Cores
+		lineageTag: b284b0a5-a2c2-48e5-8bea-f389647280de
+
+	measure 'Cor KPI Atraso Seller' = IF ( [% Atraso] > [% Atraso Rede], "#FF3B3B", "#111111" )
+		displayFolder: 11 Cores
+		lineageTag: 43e6d08e-b864-4438-851c-aa65ec47725a
+
+	measure 'Cor Categoria Seller' =
+			VAR _max = MAXX ( ALLSELECTED ( dm_categoria[categoria] ), [Faturamento] )
+			RETURN IF ( [Faturamento] = _max, "#1A6BF5", "#CFE0FF" )
+		displayFolder: 11 Cores
+		lineageTag: 7c51dc6b-0c41-4034-827a-c480f372deaa
 
 	partition _Medidas = m
 		mode: import

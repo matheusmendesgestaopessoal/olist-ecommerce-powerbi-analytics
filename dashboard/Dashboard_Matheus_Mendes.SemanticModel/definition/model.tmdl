@@ -25,7 +25,7 @@ queryGroup 30_FACTS
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
-annotation PBI_QueryOrder = ["src_order_items","src_reviews","src_orders","src_category_translation","src_products","src_sellers","stg_orders","stg_order_items","stg_products","stg_category_translation","stg_sellers","stg_reviews","stg_review_order","dm_categoria","dm_seller","dm_data","ft_vendas","ft_avaliacoes_seller","ft_avaliacoes_categoria","_Medidas"]
+annotation PBI_QueryOrder = ["src_order_items","src_reviews","src_orders","src_customers","src_category_translation","src_products","src_sellers","stg_orders","stg_customers","stg_order_items","stg_products","stg_category_translation","stg_sellers","stg_reviews","stg_review_order","dm_categoria","dm_seller","dm_cliente_uf","dm_data","ft_vendas","_Medidas"]
 
 annotation PBI_ProTooling = ["DevMode"]
 
@@ -33,12 +33,8 @@ ref table dm_categoria
 ref table dm_seller
 ref table dm_data
 ref table ft_vendas
-ref table ft_avaliacoes_seller
-ref table ft_avaliacoes_categoria
 ref table _Medidas
-ref table Perspectiva
-ref table 'Perspectiva Seller'
-ref table 'Eixo Concentracao'
+ref table dm_cliente_uf
 
 ref cultureInfo pt-BR
 

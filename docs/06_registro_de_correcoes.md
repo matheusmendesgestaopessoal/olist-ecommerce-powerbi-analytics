@@ -39,8 +39,21 @@ O desafio original pedia os melhores sellers e categorias por ano. Os campeões 
 coincidiram, então a análise passou a investigar **o que decide a nota do cliente**. O resultado (o prazo de entrega,
 com o transporte como principal gargalo) está em `05_analise_e_recomendacoes.md`.
 
-O modelo do Power BI ainda não tem as datas de entrega nem o estado do cliente: elas entram na reconstrução do
-dashboard, com uma tabela fato de pedidos.
+## 5. Dashboard reconstruído
+
+Para responder à pergunta ampliada, o modelo do Power BI foi refeito:
+
+| Antes | Depois |
+|---|---|
+| 3 fatos (`ft_vendas` por item, `ft_avaliacoes_seller`, `ft_avaliacoes_categoria`) | 1 fato `ft_vendas` no grão pedido × seller × categoria, com prazo, atraso, etapas, estado do cliente e nota |
+| Sem datas de entrega nem estado do cliente | Novas consultas `src_customers`/`stg_customers`; `stg_orders` com postagem, entrega e data estimada |
+| 4 dimensões | 5 dimensões: nova `dm_cliente_uf` (estado e região); `dm_categoria` com nomes em português |
+| 26 medidas, 3 tabelas de apoio (parâmetros de campo) | Medidas organizadas em pastas (base, nota, entrega, sellers, rede, textos, cores); tabelas de apoio removidas |
+| Relatório de 1 página montado à mão | 3 páginas geradas por `dashboard/gerador_pbir/gerar_paginas.py` a partir de fundos em HTML: diagnóstico, detalhe do seller (drill-through) e dica do estado |
+
+Os números do dashboard novo foram conferidos por consulta DAX contra a saída de `diagnostico.py`
+(nota no prazo 4,29 × atrasado 2,27, atraso 6,7%, 37% das notas 1, 72% dos atrasos no transporte, regiões e faixas de prazo).
+`docs/medidas-dax.md` saiu: as medidas estão no dicionário de dados (`04`), gerado do próprio modelo.
 
 ## Como reproduzir
 
