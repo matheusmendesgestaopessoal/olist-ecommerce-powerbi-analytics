@@ -21,7 +21,7 @@ WHERE o.order_status = 'delivered'
 -- (justifica o LEFT OUTER JOIN no Power Query)
 SELECT DISTINCT p.product_category_name
 FROM raw.products p
-LEFT JOIN raw.product_category_name_translation t
+LEFT JOIN raw.product_category_translation t
        ON t.product_category_name = p.product_category_name
 WHERE t.product_category_name IS NULL
   AND NULLIF(TRIM(p.product_category_name), '') IS NOT NULL;

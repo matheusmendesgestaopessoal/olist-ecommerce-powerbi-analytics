@@ -1,6 +1,6 @@
 -- =====================================================================
 -- 10 | Tamanho das amostras e escala dos sellers
--- Documentado: 572 sellers com apenas 1 pedido avaliado;
+-- Documentado: 534 sellers com apenas 1 pedido avaliado;
 --              mediana de 7 pedidos entregues por seller; máximo 1.819.
 -- Decisão: nota ajustada (Empirical Bayes) como camada complementar.
 -- =====================================================================

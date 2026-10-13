@@ -87,8 +87,8 @@ CREATE TABLE raw.geolocation (
     geolocation_state           TEXT
 );
 
-DROP TABLE IF EXISTS raw.product_category_name_translation;
-CREATE TABLE raw.product_category_name_translation (
+DROP TABLE IF EXISTS raw.product_category_translation;
+CREATE TABLE raw.product_category_translation (
     product_category_name         TEXT,
     product_category_name_english TEXT
 );

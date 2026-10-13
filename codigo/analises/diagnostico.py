@@ -140,6 +140,43 @@ def main():
     faixas = pd.cut(av.dias, [0, 7, 14, 21, 30, 1000], labels=["até 7", "8 a 14", "15 a 21", "22 a 30", "mais de 30"])
     print(av.groupby(faixas, observed=True).agg(pedidos=("order_id", "size"), nota=("nota", "mean")).round(2))
 
+    n_ok = av[av.atraso == 0].nota.mean()
+    for parte in (0.5, 1.0):  # simulação: parte dos atrasados passa a ter a nota média de quem chega no prazo
+        sim = av.nota.copy()
+        sim.loc[av[av.atraso == 1].sample(frac=parte, random_state=1).index] = n_ok
+        print(f"se {parte:.0%} dos atrasos chegassem no prazo: nota {av.nota.mean():.2f} → {sim.mean():.2f} "
+              f"· notas 1 {(av.nota.round() == 1).mean():.1%} → {(sim.round() == 1).mean():.1%}")
+
+    print("\n== QUEM ATRASA: SELLER OU TRANSPORTE")
+    e = conectar()
+    etapas = pd.read_sql("""SELECT o.order_id,
+                                   NULLIF(o.order_delivered_carrier_date, '')::timestamp AS postado,
+                                   MAX(NULLIF(i.shipping_limit_date, '')::timestamp)     AS limite
+                            FROM raw.orders o JOIN raw.order_items i ON i.order_id = o.order_id
+                            GROUP BY o.order_id, o.order_delivered_carrier_date""", e)
+    x = ent.merge(etapas, on="order_id")
+    x["seller_atrasou"] = (x.postado > x.limite).astype(int)
+    x["dias_seller"] = (x.postado - x.compra).dt.total_seconds() / 86400
+    x["dias_transporte"] = (x.entrega - x.postado).dt.total_seconds() / 86400
+    at, ok = x[x.atraso == 1], x[x.atraso == 0]
+    print(f"nos atrasados, o seller postou depois do limite em {at.seller_atrasou.mean():.0%} (no prazo: {ok.seller_atrasou.mean():.0%})")
+    print(f"dias até postar: atrasados {at.dias_seller.mean():.1f} · no prazo {ok.dias_seller.mean():.1f}")
+    print(f"dias de transporte: atrasados {at.dias_transporte.mean():.1f} · no prazo {ok.dias_transporte.mean():.1f}")
+    print(f"prazo prometido médio {(x.prevista - x.compra).dt.days.mean():.1f} dias · entrega real média {x.dias.mean():.1f} dias "
+          f"· {(x.entrega < x.prevista).mean():.0%} chegam antes do prometido")
+    grandes = grandes.assign(faixa=pd.qcut(grandes.atraso.rank(method="first"), 4,
+                                           labels=["menor atraso", "2º quartil", "3º quartil", "maior atraso"]))
+    print(grandes.groupby("faixa", observed=True).agg(sellers=("fat", "size"), atraso=("atraso", "mean"),
+                                                      nota=("nota", "mean")).round(3))
+
+    print("\n== CRESCIMENTO (faturamento por mês, 2017 → 2018)")
+    mensal = vend[vend.ano.isin([2017, 2018])].groupby(["categoria", "ano"]).preco.sum().unstack()
+    mensal[2017], mensal[2018] = mensal[2017] / 12, mensal[2018] / 8
+    total = (vend[vend.ano == 2018].preco.sum() / 8) / (vend[vend.ano == 2017].preco.sum() / 12) - 1
+    print(f"marketplace {total:+.0%}")
+    topo = mensal.sort_values(2018, ascending=False).head(6)
+    print(((topo / 1e3).round(0)).assign(crescimento=(topo[2018] / topo[2017] - 1).round(2)))
+
     print("\n== ONDE DÓI: GEOGRAFIA")
     sp = vend.drop_duplicates("seller_id")
     print(f"sellers em SP: {(sp.uf_seller == 'SP').mean():.0%} · faturamento de sellers de SP: "
