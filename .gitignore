@@ -1,0 +1,27 @@
+# Ambientes virtuais do Python
+venv/
+.venv/
+env/
+
+# Credenciais: nunca vão para o Git (use o .env.example)
+.env
+*.env
+!.env.example
+
+# Dados brutos do Kaggle (licença CC BY-NC-SA 4.0, 121 MB): baixar, ver dados/README.md
+dados/brutos/
+
+# Caches e temporários
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+*.log
+
+# Power BI Project: configurações locais
+**/.pbi/localSettings.json
+*.pbix.bak
+
+# Lixo do sistema
+desktop.ini
+Thumbs.db
+.DS_Store
