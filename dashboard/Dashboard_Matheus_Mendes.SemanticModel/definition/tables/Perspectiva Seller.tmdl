@@ -1,0 +1,31 @@
+table 'Perspectiva Seller'
+	lineageTag: e8f0d041-4e21-402a-87f9-d3ff4896e49a
+
+	column Perspectiva
+		lineageTag: b48d59c4-f7b7-4654-800c-d01b374473eb
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Perspectiva]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ordem
+		formatString: 0
+		lineageTag: f38a7b07-82c0-4258-aef0-a6830944b238
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Ordem]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Perspectiva Seller' = calculated
+		mode: import
+		source =
+				
+				DATATABLE (
+				    "Perspectiva", STRING, "Ordem", INTEGER,
+				    { { "Faturamento", 1 }, { "Volume", 2 }, { "Nota média", 3 } }
+				)
+
+	annotation PBI_Id = 876ccaba41b149da806338c7a67020be
+

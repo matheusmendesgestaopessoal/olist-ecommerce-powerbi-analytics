@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Dashboard_Matheus_Mendes"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "c0798f4c-1263-424c-a523-f6d5a1e4a8ff"
+  }
+}

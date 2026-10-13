@@ -1,0 +1,141 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "e8962794556cee6bf3f3",
+  "position": {
+    "x": 848,
+    "y": 0,
+    "z": 1000,
+    "height": 224.00000000000003,
+    "width": 720,
+    "tabOrder": 1000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "SOBRE A ANÁLISE ",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "16pt",
+                      "color": "#063052"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Universo dos dados I ",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "16pt",
+                      "color": "#55687b"
+                    }
+                  },
+                  {
+                    "value": "Apenas com status \"Entregue\"",
+                    "textStyle": {
+                      "fontSize": "16pt",
+                      "color": "#55687b"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Faturamento I ",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "16pt",
+                      "color": "#55687b"
+                    }
+                  },
+                  {
+                    "value": "Soma do preço apenas dos itens (sem frete)",
+                    "textStyle": {
+                      "fontSize": "16pt",
+                      "color": "#55687b"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Nota ajustada I",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "16pt",
+                      "color": "#55687b"
+                    }
+                  },
+                  {
+                    "value": " Média bayesiana ponderada pelo número de avaliações",
+                    "textStyle": {
+                      "fontSize": "16pt",
+                      "color": "#55687b"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Categorias I",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "16pt",
+                      "color": "#55687b"
+                    }
+                  },
+                  {
+                    "value": " Ausente como \"Não informado\", fora dos rankings",
+                    "textStyle": {
+                      "fontSize": "16pt",
+                      "color": "#55687b"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Período I",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "16pt",
+                      "color": "#55687b"
+                    }
+                  },
+                  {
+                    "value": " 2016 (set-dez) e 2018 (jan-ago) parciais",
+                    "textStyle": {
+                      "fontSize": "16pt",
+                      "color": "#55687b"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "parentGroupName": "3a826f81cf3b2b8d89dc"
+}

@@ -1,0 +1,59 @@
+table ft_avaliacoes_seller
+	lineageTag: 02a0ff6f-9745-421e-9817-ddeb46356ba7
+
+	column seller_id
+		dataType: string
+		lineageTag: e2ea99e9-cc74-4bd8-b295-d04666dc4e59
+		summarizeBy: none
+		sourceColumn: seller_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column order_id
+		dataType: string
+		lineageTag: 3cb17cdf-1be7-4dc4-921a-7c05648d78cf
+		summarizeBy: none
+		sourceColumn: order_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column order_purchase_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 2655d72a-9c40-4daa-b5fa-e439c7c02eb5
+		summarizeBy: none
+		sourceColumn: order_purchase_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column review_score_order
+		dataType: double
+		lineageTag: 82ce8359-a9bc-46c7-8fdf-080c4d1919f4
+		summarizeBy: sum
+		sourceColumn: review_score_order
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition ft_avaliacoes_seller = m
+		mode: import
+		queryGroup: 30_FACTS
+		source =
+				let
+				  Origem = stg_order_items,
+				  #"As outras colunas foram removidas" = Table.SelectColumns(Origem, {"seller_id", "order_id"}),
+				  #"Duplicatas removidas" = Table.Distinct(#"As outras colunas foram removidas", {"seller_id", "order_id"}),
+				  #"Consultas mescladas" = Table.NestedJoin(#"Duplicatas removidas", {"order_id"}, stg_orders, {"order_id"}, "stg_orders", JoinKind.LeftOuter),
+				  #"Expandido stg_orders" = Table.ExpandTableColumn(#"Consultas mescladas", "stg_orders", {"order_status", "order_purchase_date"}, {"order_status", "order_purchase_date"}),
+				  #"Linhas filtradas" = Table.SelectRows(#"Expandido stg_orders", each ([order_status] = "delivered")),
+				  #"Colunas removidas" = Table.RemoveColumns(#"Linhas filtradas", {"order_status"}),
+				  #"Consultas mescladas 1" = Table.NestedJoin(#"Colunas removidas", {"order_id"}, stg_review_order, {"order_id"}, "stg_review_order", JoinKind.Inner),
+				  #"Expandido stg_review_order" = Table.ExpandTableColumn(#"Consultas mescladas 1", "stg_review_order", {"review_score_order"}, {"review_score_order"})
+				in
+				  #"Expandido stg_review_order"
+
+	annotation PBI_ResultType = Table
+

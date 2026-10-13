@@ -1,0 +1,152 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 948.25741455490765,
+            "y": 433.4222695917959
+          },
+          "nodeIndex": "dm_categoria",
+          "nodeLineageTag": "a98fb0bd-bbb0-443f-af96-56d9a9088bbb",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 1
+        },
+        {
+          "location": {
+            "x": 531.11168288324166,
+            "y": 30.329937703836023
+          },
+          "nodeIndex": "dm_data",
+          "nodeLineageTag": "36b3f1c5-5ed6-4de6-bf8f-5cec23db1720",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 6
+        },
+        {
+          "location": {
+            "x": 41.251487260919362,
+            "y": 426.69566581116351
+          },
+          "nodeIndex": "dm_seller",
+          "nodeLineageTag": "3d2d84cc-622d-4f60-9f29-031fa52c107d",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 2
+        },
+        {
+          "location": {
+            "x": 948.4088592223975,
+            "y": 55.917085658166314
+          },
+          "nodeIndex": "ft_avaliacoes_categoria",
+          "nodeLineageTag": "210df48c-96b5-4184-8712-578dabef58fd",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 3
+        },
+        {
+          "location": {
+            "x": 42.738705264973134,
+            "y": 52.785328807304168
+          },
+          "nodeIndex": "ft_avaliacoes_seller",
+          "nodeLineageTag": "02a0ff6f-9745-421e-9817-ddeb46356ba7",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 4
+        },
+        {
+          "location": {
+            "x": 527.43699022818691,
+            "y": 373.94333368564844
+          },
+          "nodeIndex": "ft_vendas",
+          "nodeLineageTag": "cb6883de-d8d1-4b42-a138-c8222cf66088",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 5
+        },
+        {
+          "location": {
+            "x": 1400.6981941286247,
+            "y": 32.399273079571124
+          },
+          "nodeIndex": "_Medidas",
+          "nodeLineageTag": "bfcc991b-048d-43f0-87e9-9ee729a6f41e",
+          "size": {
+            "height": 210.84676316243264,
+            "width": 234
+          },
+          "zIndex": 7
+        },
+        {
+          "location": {
+            "x": 1403.1255476770375,
+            "y": 280.18105871993333
+          },
+          "nodeIndex": "Perspectiva",
+          "nodeLineageTag": "3f5a2d67-49d9-44c5-9114-255d45818450",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1651.928966870589,
+            "y": 279.20638886926912
+          },
+          "nodeIndex": "Perspectiva Seller",
+          "nodeLineageTag": "e8f0d041-4e21-402a-87f9-d3ff4896e49a",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1649.3282374466521,
+            "y": 30.73980807659008
+          },
+          "nodeIndex": "Eixo Concentracao",
+          "nodeLineageTag": "23c962aa-1002-4e25-b4b2-4f025bc0769c",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "Todas as tabelas",
+      "zoomValue": 79.553182037699813,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "Todas as tabelas",
+  "defaultDiagram": "Todas as tabelas"
+}

@@ -1,0 +1,88 @@
+table 'Eixo Concentracao'
+	lineageTag: 23c962aa-1002-4e25-b4b2-4f025bc0769c
+
+	measure 'Qtd Sellers Ativos' =
+			
+			COUNTROWS(
+			    FILTER(
+			        ALLSELECTED(dm_seller[seller_id]),
+			        CALCULATE([Faturamento]) > 0
+			    )
+			)
+		formatString: 0
+		lineageTag: 84c9fedc-fa05-4746-9b15-321ff4af9878
+
+	measure 'Curva Concentracao Faturamento %' =
+			
+			VAR PctSellers =
+			    DIVIDE(MAX('Eixo Concentracao'[Value]), 100, 0)
+			
+			VAR SellersAtivos =
+			    FILTER(
+			        ALLSELECTED(dm_seller[seller_id]),
+			        CALCULATE([Faturamento]) > 0
+			    )
+			
+			VAR QtdSellers =
+			    COUNTROWS(SellersAtivos)
+			
+			VAR QtdTop =
+			    ROUNDUP(QtdSellers * PctSellers, 0)
+			
+			VAR TopSellers =
+			    TOPN(
+			        QtdTop,
+			        SellersAtivos,
+			        [Faturamento],
+			        DESC,
+			        dm_seller[seller_id],
+			        ASC
+			    )
+			
+			VAR FaturamentoTop =
+			    SUMX(
+			        TopSellers,
+			        CALCULATE([Faturamento])
+			    )
+			
+			VAR FaturamentoTotal =
+			    CALCULATE(
+			        [Faturamento],
+			        ALLSELECTED(dm_seller[seller_id])
+			    )
+			
+			RETURN
+			    IF(
+			        QtdSellers = 0,
+			        BLANK(),
+			        DIVIDE(FaturamentoTop, FaturamentoTotal, 0)
+			    )
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: be93586b-cf87-46ca-b7e2-d29bf8eebd7c
+
+	measure 'Ponto Top 10%' =
+			
+			IF(
+			    MAX('Eixo Concentracao'[Value]) = 10,
+			    [Curva Concentracao Faturamento %],
+			    BLANK()
+			)
+		lineageTag: 525b3a62-8886-4a41-8016-91cb98a89e88
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Value
+		formatString: 0
+		lineageTag: c6c31862-6f07-4c6b-b26e-88de4c2e55f1
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Value]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Eixo Concentracao' = calculated
+		mode: import
+		source = GENERATESERIES(0, 100, 1)
+
+	annotation PBI_Id = 800116f32ea64b099c6faebf19927651
+

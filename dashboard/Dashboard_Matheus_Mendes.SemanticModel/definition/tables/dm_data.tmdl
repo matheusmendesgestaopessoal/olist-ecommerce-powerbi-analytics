@@ -1,0 +1,130 @@
+table dm_data
+	lineageTag: 36b3f1c5-5ed6-4de6-bf8f-5cec23db1720
+	dataCategory: Time
+
+	column date
+		dataType: dateTime
+		isKey
+		formatString: Long Date
+		lineageTag: b714bd87-5fca-415c-8d5b-c38741e50975
+		summarizeBy: none
+		sourceColumn: date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column year
+		dataType: int64
+		formatString: 0
+		lineageTag: b9087ddb-9d46-402d-9db3-3b0070c844b8
+		summarizeBy: sum
+		sourceColumn: year
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_number
+		dataType: int64
+		formatString: 0
+		lineageTag: 7cb68f21-826c-4aa3-8682-9078d2f0905b
+		summarizeBy: sum
+		sourceColumn: month_number
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_name
+		dataType: string
+		lineageTag: 24b5195d-4ceb-4fa3-aeb4-6ca7f57b64fe
+		summarizeBy: none
+		sourceColumn: month_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column quarter
+		dataType: string
+		lineageTag: bae2f71b-aebf-4feb-b2a3-436e285b8e08
+		summarizeBy: none
+		sourceColumn: quarter
+
+		annotation SummarizationSetBy = Automatic
+
+	column year_month
+		dataType: string
+		lineageTag: ff1ab957-bbaf-497d-bbdc-d27a993960e6
+		summarizeBy: none
+		sourceColumn: year_month
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mes Abrev' =
+			
+			UPPER ( LEFT ( dm_data[month_name], 1 ) ) & LOWER ( MID ( dm_data[month_name], 2, 2 ) )
+		lineageTag: e7de3faf-1e52-42e0-a619-cd4bd0d0718b
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dm_data = m
+		mode: import
+		queryGroup: 20_DIMENSIONS
+		source =
+				let
+				    DataInicial = List.Min(stg_orders[order_purchase_date]),
+				    DataFinal = List.Max(stg_orders[order_purchase_date]),
+				
+				    ListaDatas = List.Dates(
+				        DataInicial,
+				        Duration.Days(DataFinal - DataInicial) + 1,
+				        #duration(1, 0, 0, 0)
+				    ),
+				
+				    TabelaDatas = Table.FromList(
+				        ListaDatas,
+				        Splitter.SplitByNothing(),
+				        {"date"}
+				    ),
+				
+				    TipoData = Table.TransformColumnTypes(
+				        TabelaDatas,
+				        {{"date", type date}}
+				    ),
+				
+				    Ano = Table.AddColumn(
+				        TipoData,
+				        "year",
+				        each Date.Year([date]),
+				        Int64.Type
+				    ),
+				
+				    MesNumero = Table.AddColumn(
+				        Ano,
+				        "month_number",
+				        each Date.Month([date]),
+				        Int64.Type
+				    ),
+				
+				    MesNome = Table.AddColumn(
+				        MesNumero,
+				        "month_name",
+				        each Date.MonthName([date], "pt-BR"),
+				        type text
+				    ),
+				
+				    Trimestre = Table.AddColumn(
+				        MesNome,
+				        "quarter",
+				        each "T" & Text.From(Date.QuarterOfYear([date])),
+				        type text
+				    ),
+				
+				    AnoMes = Table.AddColumn(
+				        Trimestre,
+				        "year_month",
+				        each Date.ToText([date], "yyyy-MM"),
+				        type text
+				    )
+				in
+				    AnoMes
+
+	annotation PBI_ResultType = Table
+

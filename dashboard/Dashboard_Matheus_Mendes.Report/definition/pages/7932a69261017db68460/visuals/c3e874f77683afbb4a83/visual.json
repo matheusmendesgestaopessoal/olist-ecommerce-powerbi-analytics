@@ -1,0 +1,180 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "c3e874f77683afbb4a83",
+  "position": {
+    "x": 1185.1428571428571,
+    "y": 192.47619047619537,
+    "z": 8000,
+    "height": 496,
+    "width": 528,
+    "tabOrder": 8000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "01",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "20pt",
+                      "color": "#50c0ae"
+                    }
+                  },
+                  {
+                    "value": " AVALIAÇÕES E NOTAS",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "14pt",
+                      "color": "#063052"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "1 em cada 10 pedidos recebe nota 1,",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "14pt",
+                      "color": "#55687b"
+                    }
+                  },
+                  {
+                    "value": " apesar da média 4,16",
+                    "textStyle": {
+                      "fontSize": "14pt",
+                      "color": "#55687b"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Fato",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "14pt",
+                      "color": "#063052"
+                    }
+                  },
+                  {
+                    "value": " -",
+                    "textStyle": {
+                      "fontSize": "14pt",
+                      "color": "#55687b"
+                    }
+                  },
+                  {
+                    "value": " ",
+                    "textStyle": {
+                      "fontSize": "14pt"
+                    }
+                  },
+                  {
+                    "value": "De 95.832 pedidos avaliados, 59% receberam nota 5 e 10% receberam nota 1 (9.313 pedidos). A nota 2, que fica no meio do caminho, aparece em só 3% dos pedidos.",
+                    "textStyle": {
+                      "fontSize": "14pt",
+                      "color": "#55687b"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "I",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "14pt",
+                      "color": "#55687b"
+                    }
+                  },
+                  {
+                    "value": "nterpretação",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "14pt",
+                      "color": "#063052"
+                    }
+                  },
+                  {
+                    "value": " - Os clientes avaliam nos extremos: ou ficam muito satisfeitos, ou muito insatisfeitos. A média alta passa a impressão de que todos estão bem atendidos, mas existe um grupo grande de pedidos com experiência muito ruim.",
+                    "textStyle": {
+                      "fontSize": "14pt",
+                      "color": "#55687b"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Ação",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "14pt",
+                      "color": "#063052"
+                    }
+                  },
+                  {
+                    "value": " -",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "14pt",
+                      "color": "#55687b"
+                    }
+                  },
+                  {
+                    "value": " Investigar os pedidos com nota 1 para descobrir a causa (atraso, produto errado, vendedor específico) e agir com os vendedores e categorias que mais concentram essas notas.",
+                    "textStyle": {
+                      "fontSize": "14pt",
+                      "color": "#55687b"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "parentGroupName": "c2474aa2a2f8cbab707d"
+}

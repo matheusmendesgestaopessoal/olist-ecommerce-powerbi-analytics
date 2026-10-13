@@ -1,0 +1,182 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "fcb57e70420d55700762",
+  "position": {
+    "x": 32,
+    "y": 16,
+    "z": 1000,
+    "height": 256,
+    "width": 752,
+    "tabOrder": 30000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "PERGUNTAS QUE ESSE RELATÓRIO RESPONDE",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "16pt",
+                      "color": "#063052"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "02 ",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "16pt",
+                      "color": "#50c0ae"
+                    }
+                  },
+                  {
+                    "value": "Qual o tamanho da operação e como ela evoluiu?",
+                    "textStyle": {
+                      "fontSize": "16pt",
+                      "color": "#55687b"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "03 ",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "16pt",
+                      "color": "#50c0ae"
+                    }
+                  },
+                  {
+                    "value": "Como as categorias se destacaram por faturamento, volume e avaliação?",
+                    "textStyle": {
+                      "fontSize": "16pt",
+                      "color": "#55687b"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "04 ",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "16pt",
+                      "color": "#50c0ae"
+                    }
+                  },
+                  {
+                    "value": "Como os vendedores se destacaram por faturamento, volume e avaliação?",
+                    "textStyle": {
+                      "fontSize": "16pt",
+                      "color": "#55687b"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "\t\t"
+                  },
+                  {
+                    "value": "4.1 ",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "16pt",
+                      "color": "#50c0ae"
+                    }
+                  },
+                  {
+                    "value": "Quem são os melhores vendedores, de fato?",
+                    "textStyle": {
+                      "fontSize": "16pt",
+                      "color": "#55687b"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "05 ",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "16pt",
+                      "color": "#50c0ae"
+                    }
+                  },
+                  {
+                    "value": "Quanto cada vendedor fatura em média por pedido?",
+                    "textStyle": {
+                      "fontSize": "16pt",
+                      "color": "#55687b"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "06 ",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "16pt",
+                      "color": "#50c0ae"
+                    }
+                  },
+                  {
+                    "value": "Como os clientes avaliaram os pedidos?",
+                    "textStyle": {
+                      "fontSize": "16pt",
+                      "color": "#55687b"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "07 ",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "16pt",
+                      "color": "#50c0ae"
+                    }
+                  },
+                  {
+                    "value": "Quais oportunidades foram identificadas?",
+                    "textStyle": {
+                      "fontSize": "16pt",
+                      "color": "#55687b"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "parentGroupName": "224fac902b3d1833d4ca"
+}

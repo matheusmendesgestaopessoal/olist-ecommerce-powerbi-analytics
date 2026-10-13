@@ -1,0 +1,180 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "4366b4873d79e9c99ef4",
+  "position": {
+    "x": 17.142857142857025,
+    "y": 192.47619047619537,
+    "z": 4000,
+    "height": 496,
+    "width": 528,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "01",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "20pt",
+                      "color": "#50c0ae"
+                    }
+                  },
+                  {
+                    "value": " CATEGORIAS",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "14pt",
+                      "color": "#063052"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Beleza e Saúde cresceu cerca de 140% ",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "14pt",
+                      "color": "#55687b"
+                    }
+                  },
+                  {
+                    "value": "e tomou a liderança de Cama, Mesa e Banho",
+                    "textStyle": {
+                      "fontSize": "14pt",
+                      "color": "#55687b"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Fato",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "14pt",
+                      "color": "#063052"
+                    }
+                  },
+                  {
+                    "value": " -",
+                    "textStyle": {
+                      "fontSize": "14pt",
+                      "color": "#55687b"
+                    }
+                  },
+                  {
+                    "value": " ",
+                    "textStyle": {
+                      "fontSize": "14pt"
+                    }
+                  },
+                  {
+                    "value": "Beleza e Saúde passou de R$ 39 mil/mês em 2017 para R$ 94 mil/mês em 2018 (R$ 755.725 em 8 meses). Relógios e Presentes cresceu cerca de 115%. Cama, Mesa e Banho, líder de 2017 (R$ 490.597), cresceu só 62%, abaixo dos 82% do marketplace. As mesmas 5 categorias formam o Top 5 nos dois anos.",
+                    "textStyle": {
+                      "fontSize": "14pt",
+                      "color": "#55687b"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "I",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "14pt",
+                      "color": "#55687b"
+                    }
+                  },
+                  {
+                    "value": "nterpretação",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "14pt",
+                      "color": "#063052"
+                    }
+                  },
+                  {
+                    "value": " - O Top 5 é estável, mas a demanda está migrando para Beleza e Relógios, e Cama, Mesa e Banho está perdendo participação, mesmo ainda crescendo.",
+                    "textStyle": {
+                      "fontSize": "14pt",
+                      "color": "#55687b"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Ação",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "14pt",
+                      "color": "#063052"
+                    }
+                  },
+                  {
+                    "value": " -",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "14pt",
+                      "color": "#55687b"
+                    }
+                  },
+                  {
+                    "value": " Priorizar campanhas e captação de vendedores em Beleza e Relógios, e investigar a desaceleração de Cama, Mesa e Banho (preço, sortimento ou concorrência).",
+                    "textStyle": {
+                      "fontSize": "14pt",
+                      "color": "#55687b"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "parentGroupName": "c2474aa2a2f8cbab707d"
+}

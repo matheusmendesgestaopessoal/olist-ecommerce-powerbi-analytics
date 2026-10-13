@@ -1,0 +1,424 @@
+table _Medidas
+	lineageTag: bfcc991b-048d-43f0-87e9-9ee729a6f41e
+
+	measure Faturamento =
+			
+			SUM(ft_vendas[price])
+		displayFolder: 01_Base
+		lineageTag: 106827b7-acae-4335-88b0-650da8825914
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Volume Itens' =
+			
+			COUNTROWS(ft_vendas)
+		formatString: 0
+		displayFolder: 01_Base
+		lineageTag: 86a876f5-9baf-42bb-ba70-3840017e4e3d
+
+	measure Pedidos =
+			
+			DISTINCTCOUNT(ft_vendas[order_id])
+		formatString: 0
+		displayFolder: 01_Base
+		lineageTag: 58a02993-f189-4a0e-b608-ef491949bb0d
+
+	measure 'Ticket Médio Seller' =
+			
+			AVERAGEX(
+			    VALUES(ft_vendas[order_id]),
+			    CALCULATE(
+			        SUM(ft_vendas[price])
+			    )
+			)
+		displayFolder: 02_Sellers
+		lineageTag: cba67d8e-937c-48ec-8467-d920eb18646a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Nota Média Seller' =
+			
+			AVERAGE(ft_avaliacoes_seller[review_score_order])
+		displayFolder: 02_Sellers
+		lineageTag: d52df1ce-9267-4dcf-80f8-fe336bbd00c8
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Qtd Avaliações Seller' =
+			
+			COUNTROWS(ft_avaliacoes_seller)
+		formatString: 0
+		displayFolder: 02_Sellers
+		lineageTag: 8a0dd2aa-97f0-49d3-867d-ee38002536d0
+
+	measure 'Nota Ajustada Seller' =
+			
+			VAR N =
+			    [Qtd Avaliações Seller]
+			
+			VAR MediaSeller =
+			    [Nota Média Seller]
+			
+			VAR MediaGeralAno =
+			    CALCULATE(
+			        [Nota Média Seller],
+			        REMOVEFILTERS(dm_seller)
+			    )
+			
+			VAR M = 13.88
+			
+			RETURN
+			    IF(
+			        N = 0,
+			        BLANK(),
+			        DIVIDE(N, N + M) * MediaSeller
+			            + DIVIDE(M, N + M) * MediaGeralAno
+			    )
+		displayFolder: 02_Sellers
+		lineageTag: b0399a75-ceb0-4f10-9bd0-0fb4bd7fe308
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Nota Média Categoria' =
+			
+			AVERAGE(ft_avaliacoes_categoria[review_score_order])
+		displayFolder: 03_Categorias
+		lineageTag: 9631a6c2-55ec-4f46-b7dd-94f361eb1e6c
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Qtd Avaliações Categoria' =
+			
+			COUNTROWS(ft_avaliacoes_categoria)
+		formatString: 0
+		displayFolder: 03_Categorias
+		lineageTag: ea8c4111-796a-4288-8a79-d2f806794ab2
+
+	measure 'Nota Ajustada Categoria' =
+			
+			VAR N =
+			    [Qtd Avaliações Categoria]
+			
+			VAR MediaCategoria =
+			    [Nota Média Categoria]
+			
+			VAR MediaGeralAno =
+			    CALCULATE(
+			        [Nota Média Categoria],
+			        REMOVEFILTERS(dm_categoria)
+			    )
+			
+			VAR M = 16.36
+			
+			RETURN
+			    IF(
+			        N = 0,
+			        BLANK(),
+			        DIVIDE(N, N + M) * MediaCategoria
+			            + DIVIDE(M, N + M) * MediaGeralAno
+			    )
+		displayFolder: 03_Categorias
+		lineageTag: f95e3caa-4dd8-4770-be26-82753a091245
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Ticket Médio Geral' =
+			
+			DIVIDE(
+			    [Faturamento],
+			    [Pedidos]
+			)
+		displayFolder: 01_Base
+		lineageTag: 1714d68e-90d9-424c-a987-945b06bcaa9f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Top Categoria Faturamento' =
+			
+			VAR TopCategoria =
+			    TOPN(
+			        1,
+			        FILTER(
+			            ALLSELECTED(dm_categoria),
+			            dm_categoria[ranking_eligible] = TRUE()
+			        ),
+			        [Faturamento],
+			        DESC
+			    )
+			RETURN
+			    CONCATENATEX(
+			        TopCategoria,
+			        dm_categoria[category_display],
+			        ", "
+			    )
+		displayFolder: 03_Categorias
+		lineageTag: 5cc4ebc4-8139-442a-8e53-efb4f76d1f5c
+
+	measure 'Pedidos Avaliados' =
+			
+			DISTINCTCOUNT(ft_avaliacoes_seller[order_id])
+		formatString: 0
+		displayFolder: 01_Base
+		lineageTag: 7e873f7a-bf22-4f51-9f30-2c81eb3e57dc
+
+	measure 'Valor Perspectiva Categoria' =
+			
+			SWITCH (
+			    SELECTEDVALUE ( Perspectiva[Ordem], 1 ),
+			    1, [Faturamento],
+			    2, [Volume Itens],
+			    3, [Nota Ajustada Categoria]
+			)
+		lineageTag: 04b054d9-fe94-4a15-b6a8-9b72ff9babb4
+
+		formatStringDefinition =
+				SWITCH ( SELECTEDVALUE ( Perspectiva[Ordem], 1 ),
+				    1, "R$ #,0", 2, "#,0", 3, "0.00" )
+
+	measure 'Valor Perspectiva Seller' =
+			
+			SWITCH (
+			    SELECTEDVALUE ( 'Perspectiva Seller'[Ordem], 1 ),
+			    1, [Faturamento],
+			    2, [Volume Itens],
+			    3, [Nota Ajustada Seller]
+			)
+		lineageTag: 1cc484b0-c05c-486a-916c-ba82dab54681
+
+		formatStringDefinition =
+				SWITCH ( SELECTEDVALUE ( 'Perspectiva Seller'[Ordem], 1 ),
+				    1, "R$ #,0", 2, "#,0", 3, "0.00" )
+
+	measure 'Nota Média Geral' =
+			
+			AVERAGEX(
+			    SUMMARIZE(
+			        ft_avaliacoes_seller,
+			        ft_avaliacoes_seller[order_id],
+			        "NotaPedido",
+			        MAX(ft_avaliacoes_seller[review_score_order])
+			    ),
+			    [NotaPedido]
+			)
+		displayFolder: 01_Base
+		lineageTag: 193d2ebb-6b60-4e9f-9d37-b326ed377e30
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Faturamento Top 10% Sellers' =
+			
+			VAR SellersAtivos =
+			    FILTER(
+			        ALLSELECTED(dm_seller[seller_id]),
+			        CALCULATE([Faturamento]) > 0
+			    )
+			
+			VAR QuantidadeSellers =
+			    COUNTROWS(SellersAtivos)
+			
+			VAR QuantidadeTop10 =
+			    ROUNDUP(
+			        QuantidadeSellers * 0.10,
+			        0
+			    )
+			
+			VAR TopSellers =
+			    TOPN(
+			        QuantidadeTop10,
+			        SellersAtivos,
+			        [Faturamento],
+			        DESC
+			    )
+			
+			RETURN
+			    SUMX(
+			        TopSellers,
+			        CALCULATE([Faturamento])
+			    )
+		displayFolder: 02_Sellers
+		lineageTag: cf9bf041-7b4c-4a98-b409-52c92ed21976
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '% Faturamento Top 10% Sellers' =
+			
+			VAR FaturamentoTotal =
+			    CALCULATE(
+			        [Faturamento],
+			        ALLSELECTED(dm_seller[seller_id])
+			    )
+			
+			RETURN
+			    DIVIDE(
+			        [Faturamento Top 10% Sellers],
+			        FaturamentoTotal
+			    )
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: f17f6735-7215-443a-b51a-55beb6e9f30c
+
+	measure 'Qtd Sellers Top 10%' =
+			
+			VAR SellersAtivos =
+			    FILTER(
+			        ALLSELECTED(dm_seller[seller_id]),
+			        CALCULATE([Faturamento]) > 0
+			    )
+			
+			RETURN
+			    ROUNDUP(
+			        COUNTROWS(SellersAtivos) * 0.10,
+			        0
+			    )
+		displayFolder: 02_Sellers
+		lineageTag: 7ad69dcd-19de-453e-b8fc-c7a47058c860
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Pedidos Seller' =
+			
+			DISTINCTCOUNT(ft_vendas[order_id])
+		formatString: 0
+		displayFolder: 02_Sellers
+		lineageTag: b9d77355-5798-4838-94af-bc6f981425c0
+
+	measure 'Qtd Seller-Pedidos' =
+			
+			CALCULATE(
+			    SUMX(
+			        VALUES(dm_seller[seller_id]),
+			        CALCULATE(
+			            DISTINCTCOUNT(ft_vendas[order_id])
+			        )
+			    ),
+			    REMOVEFILTERS(dm_seller)
+			)
+		formatString: 0
+		displayFolder: 02_Sellers
+		lineageTag: cd3c445f-f75d-49d7-b705-b56e2b73849c
+
+	measure 'Ticket Médio Global Sellers' =
+			
+			VAR ReceitaGlobal =
+			    CALCULATE(
+			        [Faturamento],
+			        REMOVEFILTERS(dm_seller)
+			    )
+			
+			RETURN
+			    DIVIDE(
+			        ReceitaGlobal,
+			        [Qtd Seller-Pedidos]
+			    )
+		displayFolder: 02_Sellers
+		lineageTag: aaaaac50-55de-489c-a713-663bb5be9d09
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Ticket Médio Ajustado' =
+			
+			VAR N =
+			    [Pedidos Seller]
+			
+			VAR TicketSeller =
+			    [Ticket Médio Seller]
+			
+			VAR TicketGlobal =
+			    [Ticket Médio Global Sellers]
+			
+			VAR M =
+			    0.8398
+			
+			VAR PesoSeller =
+			    DIVIDE(
+			        N,
+			        N + M
+			    )
+			
+			RETURN
+			    IF(
+			        N = 0,
+			        BLANK(),
+			        PesoSeller * TicketSeller
+			            + (1 - PesoSeller) * TicketGlobal
+			    )
+		displayFolder: 02_Sellers
+		lineageTag: 2800cae5-6d89-4575-8921-3b351f14ac0c
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '% Notas 1 a 3' =
+			
+			VAR PedidosAvaliados =
+			    SUMMARIZE(
+			        ft_avaliacoes_seller,
+			        ft_avaliacoes_seller[order_id],
+			        "Nota",
+			        MAX(ft_avaliacoes_seller[review_score_order])
+			    )
+			
+			VAR QtdNotas1a3 =
+			    COUNTROWS(
+			        FILTER(
+			            PedidosAvaliados,
+			            [Nota] >= 1 &&
+			            [Nota] <= 3.9
+			        )
+			    )
+			
+			RETURN
+			    DIVIDE(
+			        QtdNotas1a3,
+			        COUNTROWS(PedidosAvaliados)
+			    )
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 0e0f01fa-e32f-40d8-9f17-f605a669e279
+
+	measure '% Notas 4 a 5' =
+			
+			VAR PedidosAvaliados =
+			    SUMMARIZE(
+			        ft_avaliacoes_seller,
+			        ft_avaliacoes_seller[order_id],
+			        "Nota",
+			        MAX(ft_avaliacoes_seller[review_score_order])
+			    )
+			
+			VAR QtdNotas4a5 =
+			    COUNTROWS(
+			        FILTER(
+			            PedidosAvaliados,
+			            [Nota] >= 4 &&
+			            [Nota] <= 5
+			        )
+			    )
+			
+			RETURN
+			    DIVIDE(
+			        QtdNotas4a5,
+			        COUNTROWS(PedidosAvaliados)
+			    )
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 0b22995c-402b-44d7-8089-ace3de0f2060
+
+	measure '% Pedidos Avaliados' =
+			
+			DIVIDE (
+			    [Pedidos Avaliados],
+			    CALCULATE ( [Pedidos Avaliados], REMOVEFILTERS ( ft_avaliacoes_seller[review_score_order] ) )
+			)
+		lineageTag: 3e586ea6-c430-4e13-a462-6fadcecc3a24
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition _Medidas = m
+		mode: import
+		source =
+				let
+				  Origem = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WMlSKjQUA", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Dummy = _t]),
+				  #"Tipo de coluna alterado" = Table.TransformColumnTypes(Origem, {{"Dummy", Int64.Type}}),
+				    #"Colunas Removidas" = Table.RemoveColumns(#"Tipo de coluna alterado",{"Dummy"})
+				in
+				  #"Colunas Removidas"
+
+	annotation PBI_ResultType = Table
+

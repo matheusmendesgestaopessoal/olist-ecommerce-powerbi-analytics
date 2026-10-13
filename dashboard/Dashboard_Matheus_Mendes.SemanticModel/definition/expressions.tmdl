@@ -1,0 +1,153 @@
+expression src_order_items =
+		let
+		  Origem = PostgreSQL.Database("localhost:5432", "olist"),
+		  #"Navegação 1" = Origem{[Schema = "raw", Item = "order_items"]}[Data]
+		in
+		  #"Navegação 1"
+	lineageTag: eb4c02bd-4642-4cf3-8812-47e20c98524e
+	queryGroup: 00_SOURCE
+
+	annotation PBI_ResultType = Table
+
+expression src_reviews =
+		let
+		  Origem = PostgreSQL.Database("localhost:5432", "olist"),
+		  #"Navegação 1" = Origem{[Schema = "raw", Item = "order_reviews"]}[Data]
+		in
+		  #"Navegação 1"
+	lineageTag: 9b87dd68-c751-4918-90e5-cd86491d7043
+	queryGroup: 00_SOURCE
+
+	annotation PBI_ResultType = Table
+
+expression src_orders =
+		let
+		  Origem = PostgreSQL.Database("localhost:5432", "olist"),
+		  #"Navegação 1" = Origem{[Schema = "raw", Item = "orders"]}[Data]
+		in
+		  #"Navegação 1"
+	lineageTag: f63050f7-afc5-44ef-8754-5163b7478c98
+	queryGroup: 00_SOURCE
+
+	annotation PBI_ResultType = Table
+
+expression src_category_translation =
+		let
+		  Origem = PostgreSQL.Database("localhost:5432", "olist"),
+		  #"Navegação 1" = Origem{[Schema = "raw", Item = "product_category_translation"]}[Data]
+		in
+		  #"Navegação 1"
+	lineageTag: bc086617-279f-4fbc-904b-531994bf16b7
+	queryGroup: 00_SOURCE
+
+	annotation PBI_ResultType = Table
+
+expression src_products =
+		let
+		  Origem = PostgreSQL.Database("localhost:5432", "olist"),
+		  #"Navegação 1" = Origem{[Schema = "raw", Item = "products"]}[Data]
+		in
+		  #"Navegação 1"
+	lineageTag: 3d3bf297-2b21-481c-a66f-d272efb0fa19
+	queryGroup: 00_SOURCE
+
+	annotation PBI_ResultType = Table
+
+expression src_sellers =
+		let
+		  Origem = PostgreSQL.Database("localhost:5432", "olist"),
+		  #"Navegação 1" = Origem{[Schema = "raw", Item = "sellers"]}[Data]
+		in
+		  #"Navegação 1"
+	lineageTag: 434b9178-ee16-4676-b4d0-5efcf393270c
+	queryGroup: 00_SOURCE
+
+	annotation PBI_ResultType = Table
+
+expression stg_orders =
+		let
+		  Origem = src_orders,
+		  #"As outras colunas foram removidas" = Table.SelectColumns(Origem, {"order_id", "order_status", "order_purchase_timestamp"}),
+		  #"Tipo de coluna alterado" = Table.TransformColumnTypes(#"As outras colunas foram removidas", {{"order_purchase_timestamp", type datetime}}),
+		  #"Coluna duplicada" = Table.DuplicateColumn(#"Tipo de coluna alterado", "order_purchase_timestamp", "order_purchase_timestamp – Cópia"),
+		  #"Tipo de coluna alterado 1" = Table.TransformColumnTypes(#"Coluna duplicada", {{"order_purchase_timestamp – Cópia", type date}}),
+		  #"Colunas renomeadas" = Table.RenameColumns(#"Tipo de coluna alterado 1", {{"order_purchase_timestamp – Cópia", "order_purchase_date"}})
+		in
+		  #"Colunas renomeadas"
+	lineageTag: 9ebe1f89-4194-4d42-8d99-96b74c877b48
+	queryGroup: 10_STAGING
+
+	annotation PBI_ResultType = Table
+
+expression stg_order_items =
+		let
+		  Origem = src_order_items,
+		  #"As outras colunas foram removidas" = Table.SelectColumns(Origem, {"order_id", "order_item_id", "product_id", "seller_id", "price", "freight_value"}),
+		  #"Tipo de coluna alterado" = Table.TransformColumnTypes(#"As outras colunas foram removidas", {{"order_item_id", Int64.Type}}),
+		  #"O tipo de coluna foi alterado com a localidade" = Table.TransformColumnTypes(#"Tipo de coluna alterado", {{"price", type number}}, "en-US"),
+		  #"O tipo de coluna foi alterado com a localidade 1" = Table.TransformColumnTypes(#"O tipo de coluna foi alterado com a localidade", {{"freight_value", type number}}, "en-US")
+		in
+		  #"O tipo de coluna foi alterado com a localidade 1"
+	lineageTag: f0c0467e-4f59-4767-b273-e20829eb3c8f
+	queryGroup: 10_STAGING
+
+	annotation PBI_ResultType = Table
+
+expression stg_products =
+		let
+		  Origem = src_products,
+		  #"As outras colunas foram removidas" = Table.SelectColumns(Origem, {"product_id", "product_category_name"}),
+		  #"Texto limpo" = Table.TransformColumns(#"As outras colunas foram removidas", {{"product_category_name", each Text.Clean(_), type nullable text}})
+		in
+		  #"Texto limpo"
+	lineageTag: 355865e8-8fc7-4e86-8694-d864ff4b5b73
+	queryGroup: 10_STAGING
+
+	annotation PBI_ResultType = Table
+
+expression stg_category_translation =
+		let
+		  Origem = src_category_translation,
+		  #"Texto limpo" = Table.TransformColumns(Origem, {{"product_category_name", each Text.Clean(_), type nullable text}, {"product_category_name_english", each Text.Clean(_), type nullable text}})
+		in
+		  #"Texto limpo"
+	lineageTag: 9915b48e-4c4b-4551-ade6-2ad8de441dbe
+	queryGroup: 10_STAGING
+
+	annotation PBI_ResultType = Table
+
+expression stg_sellers =
+		let
+		  Origem = src_sellers,
+		  #"As outras colunas foram removidas" = Table.SelectColumns(Origem, {"seller_id", "seller_city", "seller_state"}),
+		  #"Texto limpo" = Table.TransformColumns(#"As outras colunas foram removidas", {{"seller_id", each Text.Clean(_), type nullable text}, {"seller_city", each Text.Clean(_), type nullable text}, {"seller_state", each Text.Clean(_), type nullable text}})
+		in
+		  #"Texto limpo"
+	lineageTag: 087b30b2-9921-4912-97c6-a3367a144be9
+	queryGroup: 10_STAGING
+
+	annotation PBI_ResultType = Table
+
+expression stg_reviews =
+		let
+		  Origem = src_reviews,
+		  #"As outras colunas foram removidas" = Table.SelectColumns(Origem, {"order_id", "review_score", "review_comment_message"}),
+		  #"Tipo de coluna alterado" = Table.TransformColumnTypes(#"As outras colunas foram removidas", {{"review_score", Int64.Type}})
+		in
+		  #"Tipo de coluna alterado"
+	lineageTag: 9b6b58e8-770e-4f49-a1b1-1927d6040ffe
+	queryGroup: 10_STAGING
+
+	annotation PBI_ResultType = Table
+
+expression stg_review_order =
+		let
+		  Origem = stg_reviews,
+		  #"Linhas agrupadas" = Table.Group(Origem, {"order_id"}, {{"review_score_order", each List.Average([review_score]), type nullable number}})
+		in
+		  #"Linhas agrupadas"
+	lineageTag: d7fe6c95-1355-4f5e-ae96-b46a2f78c357
+	queryGroup: 10_STAGING
+
+	annotation PBI_ResultType = Table
+

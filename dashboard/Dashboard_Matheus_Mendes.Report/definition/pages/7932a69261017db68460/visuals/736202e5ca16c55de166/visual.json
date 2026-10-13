@@ -1,0 +1,173 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "736202e5ca16c55de166",
+  "position": {
+    "x": 609.142857142857,
+    "y": 192.47619047619537,
+    "z": 7000,
+    "height": 496,
+    "width": 528,
+    "tabOrder": 7000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "01",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "20pt",
+                      "color": "#50c0ae"
+                    }
+                  },
+                  {
+                    "value": " CONCENTRAÇÃO DE VENDEDORES",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "14pt",
+                      "color": "#063052"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "10% dos vendedores geram 67% do faturamento",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "14pt",
+                      "color": "#55687b"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Fato",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "14pt",
+                      "color": "#063052"
+                    }
+                  },
+                  {
+                    "value": " -",
+                    "textStyle": {
+                      "fontSize": "14pt",
+                      "color": "#55687b"
+                    }
+                  },
+                  {
+                    "value": " ",
+                    "textStyle": {
+                      "fontSize": "14pt"
+                    }
+                  },
+                  {
+                    "value": "Os 10% maiores vendedores respondem por R$ 8,86 Mi dos R$ 13,22 Mi faturados. Os outros 90% somam R$ 4,36 Mi (33%). Em média, cada vendedor do grupo do topo fatura cerca de 18 vezes mais que um vendedor do restante da base.",
+                    "textStyle": {
+                      "fontSize": "14pt",
+                      "color": "#55687b"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "I",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "14pt",
+                      "color": "#55687b"
+                    }
+                  },
+                  {
+                    "value": "nterpretação",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "14pt",
+                      "color": "#063052"
+                    }
+                  },
+                  {
+                    "value": " - A receita depende de um grupo pequeno de vendedores. A saída ou a queda de desempenho de poucos deles tem impacto direto no resultado, enquanto a maior parte da base contribui pouco individualmente.",
+                    "textStyle": {
+                      "fontSize": "14pt",
+                      "color": "#55687b"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Ação",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "14pt",
+                      "color": "#063052"
+                    }
+                  },
+                  {
+                    "value": " -",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "14pt",
+                      "color": "#55687b"
+                    }
+                  },
+                  {
+                    "value": " Criar um acompanhamento dedicado para os 10% maiores (retenção, prazos e qualidade) e um programa de desenvolvimento para os vendedores logo abaixo desse grupo, para reduzir a dependência de poucos nomes.",
+                    "textStyle": {
+                      "fontSize": "14pt",
+                      "color": "#55687b"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "parentGroupName": "c2474aa2a2f8cbab707d"
+}

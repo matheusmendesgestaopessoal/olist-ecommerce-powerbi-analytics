@@ -1,0 +1,75 @@
+table dm_categoria
+	lineageTag: a98fb0bd-bbb0-443f-af96-56d9a9088bbb
+
+	column category_key
+		dataType: string
+		lineageTag: f63ab15d-e240-4731-81df-24f10035f3dc
+		summarizeBy: none
+		sourceColumn: category_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column category_name_english
+		dataType: string
+		lineageTag: 81a091ef-ad90-4959-b830-a34ec600384e
+		summarizeBy: none
+		sourceColumn: category_name_english
+
+		annotation SummarizationSetBy = Automatic
+
+	column category_display
+		dataType: string
+		lineageTag: 2f4f6108-4ddb-4e01-96ab-395fccf48be7
+		summarizeBy: none
+		sourceColumn: category_display
+
+		annotation SummarizationSetBy = Automatic
+
+	column ranking_eligible
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 4c23023d-f321-43f6-afb7-91dde00f5954
+		summarizeBy: none
+		sourceColumn: ranking_eligible
+
+		annotation SummarizationSetBy = Automatic
+
+	column category_display_pt
+		dataType: string
+		lineageTag: d3c02043-e54e-4582-91e6-1e01e6ef7f8c
+		summarizeBy: none
+		sourceColumn: category_display_pt
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dm_categoria = m
+		mode: import
+		queryGroup: 20_DIMENSIONS
+		source =
+				let
+				  Origem = stg_products,
+				  #"As outras colunas foram removidas" = Table.SelectColumns(Origem, {"product_category_name"}),
+				  #"Duplicatas removidas" = Table.Distinct(#"As outras colunas foram removidas", {"product_category_name"}),
+				  #"Valor substituído" = Table.ReplaceValue(#"Duplicatas removidas", null, "nao_informado", Replacer.ReplaceValue, {"product_category_name"}),
+				  #"Colunas renomeadas" = Table.RenameColumns(#"Valor substituído", {{"product_category_name", "category_key"}}),
+				  #"Consultas mescladas" = Table.NestedJoin(#"Colunas renomeadas", {"category_key"}, src_category_translation, {"product_category_name"}, "src_category_translation", JoinKind.LeftOuter),
+				  #"Expandido src_category_translation" = Table.ExpandTableColumn(#"Consultas mescladas", "src_category_translation", {"product_category_name_english"}, {"product_category_name_english"}),
+				  #"Colunas renomeadas 1" = Table.RenameColumns(#"Expandido src_category_translation", {{"product_category_name_english", "category_name_english"}}),
+				  #"Personalização adicionada" = Table.AddColumn(#"Colunas renomeadas 1", "category_display", each if [category_key] = "pc_gamer" then "PC Gamer"
+				else if [category_key] = "portateis_cozinha_e_preparadores_de_alimentos" then "Portable Kitchen and Food Preparation Appliances"
+				else if [category_key] = "nao_informado" then "Não informado"
+				else [category_name_english]),
+				  #"Personalização adicionada 1" = Table.AddColumn(#"Personalização adicionada", "ranking_eligible", each if [category_key] = "nao_informado" then false else true),
+				  #"Tipo de coluna alterado" = Table.TransformColumnTypes(#"Personalização adicionada 1", {{"ranking_eligible", type logical}}),
+				  #"Personalização adicionada 2" = Table.TransformColumnTypes(Table.AddColumn(#"Tipo de coluna alterado", "category_display_pt", each Text.Proper(
+				    Text.Replace(
+				        [category_key],
+				        "_",
+				        " "
+				    )
+				)), {{"category_display_pt", type text}})
+				in
+				  #"Personalização adicionada 2"
+
+	annotation PBI_ResultType = Table
+

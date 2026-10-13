@@ -1,0 +1,44 @@
+table dm_seller
+	lineageTag: 3d2d84cc-622d-4f60-9f29-031fa52c107d
+
+	column seller_id
+		dataType: string
+		lineageTag: 8a0b9c9e-7af9-4696-b171-ec620cc258e4
+		summarizeBy: none
+		sourceColumn: seller_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column seller_city
+		dataType: string
+		lineageTag: ebab3425-38f8-407b-acdf-53cdc4a43b44
+		summarizeBy: none
+		sourceColumn: seller_city
+
+		annotation SummarizationSetBy = Automatic
+
+	column seller_state
+		dataType: string
+		lineageTag: d77c2583-563a-4eec-a3ee-63000e36b1d0
+		summarizeBy: none
+		sourceColumn: seller_state
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Seller Rótulo' = LEFT ( dm_seller[seller_id], 6 ) & " · " & dm_seller[seller_state]
+		lineageTag: 3cc1791a-1763-4697-834b-b9fbe7a3265f
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dm_seller = m
+		mode: import
+		queryGroup: 20_DIMENSIONS
+		source =
+				let
+				  Origem = stg_sellers
+				in
+				  Origem
+
+	annotation PBI_ResultType = Table
+

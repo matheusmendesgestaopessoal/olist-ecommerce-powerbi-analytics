@@ -1,0 +1,32 @@
+table Perspectiva
+	lineageTag: 3f5a2d67-49d9-44c5-9114-255d45818450
+
+	column Perspectiva
+		lineageTag: e8988862-8c97-452d-a5dd-71d072af8994
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Perspectiva]
+		sortByColumn: Ordem
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ordem
+		formatString: 0
+		lineageTag: 685220ec-9333-41fa-8033-30f0c8b8010f
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Ordem]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Perspectiva = calculated
+		mode: import
+		source =
+				
+				DATATABLE (
+				    "Perspectiva", STRING, "Ordem", INTEGER,
+				    { { "Faturamento", 1 }, { "Volume", 2 }, { "Nota média", 3 } }
+				)
+
+	annotation PBI_Id = 69d7bb86d2b74a4f8966be171cc3ec86
+

@@ -1,0 +1,109 @@
+table ft_vendas
+	lineageTag: cb6883de-d8d1-4b42-a138-c8222cf66088
+
+	column order_id
+		dataType: string
+		lineageTag: a266fa5e-13d2-42b9-aa4e-3203c013da7d
+		summarizeBy: none
+		sourceColumn: order_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column order_item_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 84b68741-fe74-4235-b081-15134390b27c
+		summarizeBy: sum
+		sourceColumn: order_item_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_id
+		dataType: string
+		lineageTag: 51c5db32-5222-47b3-b2cd-a34e3e27a54e
+		summarizeBy: none
+		sourceColumn: product_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column seller_id
+		dataType: string
+		lineageTag: 9c6d97f7-c5c0-48f4-aeb8-4fd734829767
+		summarizeBy: none
+		sourceColumn: seller_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column price
+		dataType: double
+		lineageTag: b71d16af-23ea-47b5-a26a-7026bbf6f549
+		summarizeBy: sum
+		sourceColumn: price
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column freight_value
+		dataType: double
+		lineageTag: 9ac83bdb-729b-4b4e-a495-4e033ac4bddd
+		summarizeBy: sum
+		sourceColumn: freight_value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column order_purchase_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: c76835c9-6fed-4010-b294-0beec8359055
+		summarizeBy: none
+		sourceColumn: order_purchase_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column category_key
+		dataType: string
+		lineageTag: 9914cc01-1c66-4dea-b185-9897cd28fce4
+		summarizeBy: none
+		sourceColumn: category_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column category_display_pt
+		dataType: string
+		lineageTag: e02e12ac-772c-4369-b0e8-75949e829ce9
+		summarizeBy: none
+		sourceColumn: category_display_pt
+
+		annotation SummarizationSetBy = Automatic
+
+	partition ft_vendas = m
+		mode: import
+		queryGroup: 30_FACTS
+		source =
+				let
+				  Origem = stg_order_items,
+				  #"Consultas mescladas" = Table.NestedJoin(Origem, {"order_id"}, stg_orders, {"order_id"}, "stg_orders", JoinKind.LeftOuter),
+				  #"Expandido stg_orders" = Table.ExpandTableColumn(#"Consultas mescladas", "stg_orders", {"order_status", "order_purchase_date"}, {"order_status", "order_purchase_date"}),
+				  #"Linhas filtradas" = Table.SelectRows(#"Expandido stg_orders", each ([order_status] = "delivered")),
+				  #"Colunas removidas" = Table.RemoveColumns(#"Linhas filtradas", {"order_status"}),
+				  #"Consultas mescladas 1" = Table.NestedJoin(#"Colunas removidas", {"product_id"}, stg_products, {"product_id"}, "stg_products", JoinKind.LeftOuter),
+				  #"Expandido stg_products" = Table.ExpandTableColumn(#"Consultas mescladas 1", "stg_products", {"product_category_name"}, {"product_category_name"}),
+				  #"Valor substituído" = Table.ReplaceValue(#"Expandido stg_products", null, "nao_informado", Replacer.ReplaceValue, {"product_category_name"}),
+				  #"Colunas renomeadas" = Table.RenameColumns(#"Valor substituído", {{"product_category_name", "category_key"}}),
+				  #"Personalização adicionada" = Table.TransformColumnTypes(Table.AddColumn(#"Colunas renomeadas", "category_display_pt", each Text.Proper(
+				    Text.Replace(
+				        [category_key],
+				        "_",
+				        " "
+				    )
+				)), {{"category_display_pt", type text}})
+				in
+				  #"Personalização adicionada"
+
+	annotation PBI_ResultType = Table
+
