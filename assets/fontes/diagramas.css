@@ -1,0 +1,50 @@
+/* Diagramas do README: mesma identidade do dashboard (ver dashboard/gerador_pbir/fundos/base.css) */
+:root{
+  --azul:#1A6BF5;--azul-tinta:#0F4FD1;--azul-pasta:#5AB0FF;--azul-selecao:#CFE0FF;--azul-fundo:#EEF4FF;
+  --vermelho:#FF3B3B;--vermelho-fundo:#FFEDED;--verde-escuro:#00995A;--verde-fundo:#E3FAEF;
+  --grafite:#111;--grafite-2:#5E5E5E;--texto:#3F3F3F;--borda:#ECECEA;--divisor:#EFEFED;--fundo:#F7F8FA;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--fundo)}
+body{font-family:"Segoe UI",system-ui,sans-serif;color:var(--grafite);-webkit-font-smoothing:antialiased;position:relative}
+.lbl{font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--grafite-2)}
+.topo{padding:36px 48px 0}
+.topo h1{font-size:30px;font-weight:700;letter-spacing:-.025em;margin-top:6px}
+.topo p{font-size:16px;color:var(--grafite-2);margin-top:6px;max-width:1100px}
+.legenda{display:flex;gap:18px;flex-wrap:wrap;margin-top:16px;font-size:13px;color:var(--grafite-2)}
+.legenda span{display:inline-flex;align-items:center;gap:8px}
+.leg-cor{width:14px;height:14px;border-radius:4px;border:1px solid var(--borda)}
+.card{background:#fff;border:1px solid var(--borda);border-radius:14px;box-shadow:0 1px 2px rgba(17,17,17,.04),0 8px 24px rgba(17,17,17,.06)}
+
+/* tabelas do modelo */
+#tela{position:relative}
+svg.ligacoes{position:absolute;inset:0;overflow:visible;z-index:0}
+.tabela{position:absolute;overflow:hidden;z-index:1}
+.tabela h4{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;font-size:14px;font-weight:700;background:var(--cab,var(--azul-fundo));color:var(--cab-txt,var(--azul-tinta))}
+.tabela h4 small{font-size:11px;font-weight:600;opacity:.85}
+.tabela .grao{padding:6px 14px;font-size:12px;color:var(--grafite-2);background:#fff;border-bottom:1px solid var(--divisor)}
+.col{display:flex;align-items:center;gap:8px;height:26px;padding:0 14px;font-size:13px;border-top:1px solid var(--divisor);color:var(--texto)}
+.col:first-of-type{border-top:0}
+.col .nome{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.col .tipo{font-family:Consolas,monospace;font-size:11.5px;color:var(--grafite-2)}
+.col .ch{width:24px;flex:none;font-size:10px;font-weight:800;text-align:center;border-radius:5px;padding:1px 0}
+.ch.pk{background:var(--azul);color:#fff}
+.ch.fk{background:var(--azul-selecao);color:var(--azul-tinta)}
+.col.pk .nome{font-weight:700;color:var(--grafite)}
+.nota{position:absolute;z-index:1;font-size:12.5px;line-height:1.45;color:var(--texto);background:#FFF8DB;border-radius:10px;padding:8px 12px}
+
+/* ---------- peças das imagens explicativas (banner, stack, jornada, motor, gerador) */
+.sel{display:inline-block;padding:0 12px;background:var(--azul-selecao);box-shadow:inset 4px 0 0 var(--azul),inset -4px 0 0 var(--azul)}
+.logo{display:inline-flex;align-items:center;justify-content:center;flex:none}
+.logo svg{width:100%;height:100%}
+.selo{display:inline-flex;align-items:center;justify-content:center;font-weight:800;color:#fff;border-radius:8px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;background:#fff;border:1px solid var(--borda);font-size:14px;font-weight:600}
+.chip .logo{width:18px;height:18px}
+.num{width:30px;height:30px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;background:var(--azul);flex:none}
+.arquivo{font-family:Consolas,monospace;font-size:12px;background:var(--fundo);border:1px solid var(--borda);border-radius:6px;padding:3px 8px;color:var(--grafite);align-self:flex-start}
+.pilula{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12.5px;font-weight:700}
+.p-azul{background:var(--azul-fundo);color:var(--azul-tinta)}
+.p-verde{background:var(--verde-fundo);color:var(--verde-escuro)}
+.p-verm{background:var(--vermelho-fundo);color:#C41F1F}
+.p-amar{background:#FFF4CC;color:#8A6400}
+code{font-family:Consolas,monospace;font-size:.9em;background:var(--fundo);border:1px solid var(--borda);border-radius:5px;padding:0 5px}

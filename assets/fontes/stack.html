@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Stack</title>
+<link rel="stylesheet" href="diagramas.css">
+<style>
+  body{width:1600px;padding-bottom:40px}
+  .grade{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:28px 48px 0}
+  .grupo{grid-column:1/-1;display:flex;align-items:center;gap:12px;margin-top:10px}
+  .grupo .lbl{color:var(--azul-tinta)}
+  .grupo hr{flex:1;border:0;border-top:1px solid var(--borda)}
+  .item{padding:20px 20px 18px;display:flex;flex-direction:column;gap:10px}
+  .item .cab{display:flex;align-items:center;gap:12px}
+  .item .logo{width:38px;height:38px}
+  .item .selo{width:38px;height:38px;font-size:15px}
+  .item h3{font-size:18px;font-weight:700}
+  .item h3 small{display:block;font-size:12.5px;font-weight:600;color:var(--grafite-2)}
+  .item p{font-size:14px;line-height:1.5;color:var(--texto)}
+</style>
+</head>
+<body>
+<div class="topo">
+  <span class="lbl">Stack</span>
+  <h1>O que usei e para quê</h1>
+  <p>Uma ferramenta por camada, cada uma escolhida pelo papel que cumpre no fluxo, do CSV baixado do Kaggle à recomendação.</p>
+</div>
+<div class="grade">
+  <div class="grupo"><span class="lbl">Banco e qualidade dos dados</span><hr></div>
+  <div class="card item"><div class="cab"><i class="logo" data-logo="postgresql"></i><h3>PostgreSQL 18<small>camada raw</small></h3></div>
+    <p>Os 9 CSVs viram o schema <code>raw</code>, um espelho fiel da fonte: tudo como texto, nada tratado antes de ser auditado.</p></div>
+  <div class="card item"><div class="cab"><span class="selo" style="background:#1A6BF5">SQL</span><h3>SQL<small>auditoria e validação</small></h3></div>
+    <p>12 consultas de auditoria (chaves, integridade, status, duplicidades) e 7 de validação que reconciliam o modelo com o banco.</p></div>
+  <div class="card item"><div class="cab"><i class="logo" data-logo="python"></i><h3>Python<small>ingestão e automação</small></h3></div>
+    <p>Carga com <code>COPY</code> via psycopg2, diagnóstico que recalcula os números e o gerador do relatório Power BI.</p></div>
+  <div class="card item"><div class="cab"><span class="selo" style="background:#00995A">.env</span><h3>python-dotenv<small>credenciais</small></h3></div>
+    <p>Usuário e senha do banco fora do código; o repositório só traz o <code>.env.example</code>.</p></div>
+
+  <div class="grupo"><span class="lbl">Análise e modelagem</span><hr></div>
+  <div class="card item"><div class="cab"><i class="logo" data-logo="pandas" data-cor="#150458"></i><h3>Pandas<small>diagnóstico</small></h3></div>
+    <p>Recalcula cada número do dashboard direto do banco: correlação de postos, quartis de atraso e simulação de impacto.</p></div>
+  <div class="card item"><div class="cab"><i class="logo" data-logo="sqlalchemy" data-cor="#D71F00"></i><h3>SQLAlchemy<small>leitura do banco</small></h3></div>
+    <p>Conexão do diagnóstico com o PostgreSQL, com <code>pd.read_sql</code> e conversões de tipo na própria consulta.</p></div>
+  <div class="card item"><div class="cab"><span class="selo" style="background:#125379">M</span><h3>Power Query (M)<small>transformação em camadas</small></h3></div>
+    <p><code>src_</code> conecta, <code>stg_</code> limpa e tipa, <code>ft_</code>/<code>dm_</code> montam o modelo: fato no grão pedido × seller × categoria.</p></div>
+  <div class="card item"><div class="cab"><i class="logo" data-logo="powerbi"></i><h3>DAX<small>modelo semântico</small></h3></div>
+    <p>Medidas em pastas: <code>SUMMARIZE</code> por pedido, nota ajustada (Empirical Bayes), comparação com a rede, textos e cores dinâmicos.</p></div>
+
+  <div class="grupo"><span class="lbl">Visualização e entrega</span><hr></div>
+  <div class="card item"><div class="cab"><i class="logo" data-logo="powerbi"></i><h3>PBIP · PBIR · TMDL<small>relatório como código</small></h3></div>
+    <p>Relatório e modelo em arquivos de texto: versionados no Git, gerados por script e validados no JSON Schema da Microsoft.</p></div>
+  <div class="card item"><div class="cab"><i class="logo" data-logo="html5" data-cor="#E34F26"></i><h3>HTML · CSS<small>protótipo e layout</small></h3></div>
+    <p>O dashboard foi desenhado e aprovado em HTML antes do Power BI; o mesmo layout vira o fundo das páginas.</p></div>
+  <div class="card item"><div class="cab"><i class="logo" data-logo="googlechrome" data-cor="#4285F4"></i><h3>Chrome sem janela<small>medição e imagem</small></h3></div>
+    <p>Mede a posição de cada visual no layout e fotografa os fundos e os diagramas deste README.</p></div>
+  <div class="card item"><div class="cab"><i class="logo" data-logo="git" data-cor="#F05032"></i><h3>Git · GitHub<small>versionamento</small></h3></div>
+    <p>Histórico com commits por fase; dados brutos e segredos fora do repositório pelo <code>.gitignore</code>.</p></div>
+</div>
+</body>
+</html>

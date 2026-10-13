@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Arquitetura</title>
+<link rel="stylesheet" href="diagramas.css">
+<style>
+  body{width:1760px;padding-bottom:44px}
+  .fluxo{display:grid;grid-template-columns:repeat(4,1fr);gap:56px 64px;padding:34px 48px 0;position:relative}
+  .etapa{position:relative;padding:20px 22px 18px;min-height:250px;display:flex;flex-direction:column;gap:8px}
+  .etapa .cab{display:flex;align-items:center;justify-content:space-between}
+  .num{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;background:var(--azul)}
+  .ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--azul-fundo)}
+  .etapa h3{font-size:18px;font-weight:700;margin-top:4px}
+  .etapa .tec{font-size:13px;font-weight:600;color:var(--azul-tinta)}
+  .etapa p{font-size:14px;line-height:1.5;color:var(--texto)}
+  .etapa code{margin-top:auto;align-self:flex-start;font-family:Consolas,monospace;font-size:12px;background:var(--fundo);border:1px solid var(--borda);border-radius:6px;padding:3px 8px;color:var(--grafite)}
+  .etapa.destaque{background:var(--azul);border-color:var(--azul);color:#fff}
+  .etapa.destaque .tec,.etapa.destaque p{color:#E6EEFF}
+  .etapa.destaque .num{background:#fff;color:var(--azul)}
+  .etapa.destaque .ico{background:rgba(255,255,255,.18)}
+  .etapa.destaque code{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.25);color:#fff}
+  .seta{position:absolute;top:50%;right:-50px;width:36px;height:24px;transform:translateY(-50%)}
+  .desce{position:absolute;left:50%;bottom:-48px;transform:translateX(-50%)}
+  .rodape{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin:34px 48px 0}
+  .rodape .card{padding:14px 18px}
+  .rodape b{display:block;font-size:24px;font-weight:800;letter-spacing:-.02em}
+  .rodape span{font-size:13px;color:var(--grafite-2)}
+  .confere{margin:22px 48px 0;padding:14px 20px;display:flex;align-items:center;gap:14px;font-size:14.5px;color:var(--texto)}
+  .confere b{color:var(--verde-escuro)}
+</style>
+</head>
+<body>
+<div class="topo">
+  <span class="lbl">Arquitetura · do CSV à decisão</span>
+  <h1>Fluxo de dados do projeto Olist</h1>
+  <p>Oito etapas, do arquivo baixado do Kaggle à recomendação. O banco guarda a fonte intacta, o SQL audita, o Power Query transforma e o Python confere: cada número do dashboard tem um equivalente calculado fora do Power BI.</p>
+</div>
+
+<div class="fluxo">
+  <div class="card etapa"><div class="cab"><span class="num">1</span><span class="ico" data-i="csv"></span></div>
+    <h3>Dados brutos</h3><span class="tec">Kaggle · CC BY-NC-SA 4.0</span>
+    <p>9 CSVs de um marketplace real: pedidos, itens, avaliações, produtos, sellers, clientes, pagamentos (set/2016 a ago/2018).</p>
+    <code>dados/brutos/ (fora do Git)</code>
+    <svg class="seta" viewBox="0 0 36 24"><path d="M2 12h28M22 4l8 8-8 8" stroke="#1A6BF5" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+  <div class="card etapa"><div class="cab"><span class="num">2</span><span class="ico" data-i="motor"></span></div>
+    <h3>Ingestão</h3><span class="tec">Python · psycopg2 · COPY</span>
+    <p>Cria uma tabela por arquivo e carrega com <code style="margin:0;font-size:12px">COPY</code>, o caminho mais rápido do PostgreSQL. Credenciais no <code style="margin:0;font-size:12px">.env</code>.</p>
+    <code>codigo/ingestao/carregar_raw.py</code>
+    <svg class="seta" viewBox="0 0 36 24"><path d="M2 12h28M22 4l8 8-8 8" stroke="#1A6BF5" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+  <div class="card etapa"><div class="cab"><span class="num">3</span><span class="ico" data-i="banco"></span></div>
+    <h3>Camada raw</h3><span class="tec">PostgreSQL 18</span>
+    <p>Schema <code style="margin:0;font-size:12px">raw</code> com 1,5 milhão de linhas, todas as colunas como texto: espelho fiel da fonte, nada tratado antes de auditar.</p>
+    <code>sql/01_raw/</code>
+    <svg class="seta" viewBox="0 0 36 24"><path d="M2 12h28M22 4l8 8-8 8" stroke="#1A6BF5" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+  <div class="card etapa"><div class="cab"><span class="num">4</span><span class="ico" data-i="valida"></span></div>
+    <h3>Auditoria</h3><span class="tec">SQL · 12 consultas</span>
+    <p>Chaves e granularidade, integridade, status, multi-seller, avaliações duplicadas, nulos e preços extremos. Cada achado vira regra.</p>
+    <code>sql/02_auditoria/</code>
+    <svg class="desce" width="24" height="40" viewBox="0 0 24 40"><path d="M12 2v32M4 26l8 8 8-8" stroke="#1A6BF5" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+  <div class="card etapa"><div class="cab"><span class="num">5</span><span class="ico" data-i="camadas"></span></div>
+    <h3>Power Query</h3><span class="tec">M · src → stg → ft/dm</span>
+    <p>Conexão, limpeza e tipos, e o modelo: só pedidos entregues, uma nota por pedido, prazo, atraso e etapas calculados.</p>
+    <code>SemanticModel/expressions.tmdl</code>
+    <svg class="seta" viewBox="0 0 36 24" style="right:auto;left:-50px;transform:translateY(-50%) rotate(180deg)"><path d="M2 12h28M22 4l8 8-8 8" stroke="#1A6BF5" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+  <div class="card etapa"><div class="cab"><span class="num">6</span><span class="ico" data-i="estrela"></span></div>
+    <h3>Modelo semântico</h3><span class="tec">Estrela · DAX · validação SQL</span>
+    <p>1 fato e 4 dimensões. Medidas em pastas, reconciliadas com 7 consultas de validação no banco.</p>
+    <code>SemanticModel/ · sql/03_validacao/</code>
+    <svg class="seta" viewBox="0 0 36 24" style="right:auto;left:-50px;transform:translateY(-50%) rotate(180deg)"><path d="M2 12h28M22 4l8 8-8 8" stroke="#1A6BF5" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+  <div class="card etapa"><div class="cab"><span class="num">7</span><span class="ico" data-i="grafico"></span></div>
+    <h3>Dashboard</h3><span class="tec">Power BI · PBIR gerado por Python</span>
+    <p>Diagnóstico em rolagem, detalhe do seller por drill-through e dica por estado, fiéis ao protótipo aprovado.</p>
+    <code>dashboard/gerador_pbir/</code>
+    <svg class="seta" viewBox="0 0 36 24" style="right:auto;left:-50px;transform:translateY(-50%) rotate(180deg)"><path d="M2 12h28M22 4l8 8-8 8" stroke="#1A6BF5" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+  <div class="card etapa destaque"><div class="cab"><span class="num">8</span><span class="ico" data-i="decisao" data-c="#fff"></span></div>
+    <h3>Análise e decisão</h3><span class="tec">Pandas · cartões de decisão</span>
+    <p>Atraso explica a nota, o transporte explica o atraso: 3 frentes priorizadas com dono, prazo e indicador.</p>
+    <code>docs/05_analise_e_recomendacoes.md</code>
+</div>
+</div>
+
+<div class="card confere"><span class="ico" data-i="valida" style="background:var(--verde-fundo)" data-c="#00995A"></span><span><b>Conferência independente:</b> <code>codigo/analises/diagnostico.py</code> lê a camada raw com Pandas e recalcula todos os números do dashboard com as mesmas regras do Power Query. Se uma medida mudar, o número tem que continuar batendo.</span></div>
+
+<div class="rodape">
+  <div class="card"><b>96.478</b><span>pedidos entregues analisados</span></div>
+  <div class="card"><b>2.970</b><span>sellers com venda</span></div>
+  <div class="card"><b>12 + 7</b><span>consultas de auditoria e de validação</span></div>
+  <div class="card"><b>1 + 4</b><span>fato e dimensões no modelo</span></div>
+  <div class="card"><b>3</b><span>páginas no relatório, geradas por script</span></div>
+</div>
+
+<script>
+const ICONES = {
+  csv: '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M8 13h8M8 17h8"/>',
+  motor: '<path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/>',
+  banco: '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/>',
+  valida: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/>',
+  camadas: '<path d="m12 2 10 5-10 5L2 7Z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/>',
+  estrela: '<circle cx="12" cy="12" r="3"/><circle cx="4" cy="5" r="2"/><circle cx="20" cy="5" r="2"/><circle cx="4" cy="19" r="2"/><circle cx="20" cy="19" r="2"/><path d="m6 6.5 3.7 3.5M18 6.5 14.3 10M6 17.5l3.7-3.5M18 17.5 14.3 14"/>',
+  grafico: '<path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="5" rx="1"/><rect x="12" y="8" width="3" height="9" rx="1"/><rect x="17" y="5" width="3" height="12" rx="1"/>',
+  decisao: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+};
+document.querySelectorAll("[data-i]").forEach((e) => {
+  e.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${e.dataset.c || "#1A6BF5"}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONES[e.dataset.i]}</svg>`;
+});
+// segunda linha corre da direita para a esquerda (serpentina): 5 fica embaixo do 4
+const f = document.querySelector(".fluxo"), c = [...f.children];
+[c[7], c[6], c[5], c[4]].forEach((e) => f.appendChild(e));
+</script>
+<script src="ligacoes.js"></script>
+<script>marcarAltura();</script>
+</body>
+</html>

@@ -14,7 +14,7 @@
 ### Modelo
 - **RF08** Transformar os dados no Power Query antes do Power BI, em camadas `src_` → `stg_` → `ft_`/`dm_`.
 - **RF09** Modelo dimensional com tabelas fato (prefixo `ft_`) e dimensão (prefixo `dm_`).
-- **RF10** Uma tabela fato por granularidade: item vendido, avaliação por seller e avaliação por categoria.
+- **RF10** Fato no grão pedido × seller × categoria, com os atributos do pedido (cliente, prazo, atraso, nota); medidas de pedido agregam por `order_id` para não contar o mesmo pedido duas vezes.
 
 ### Análise ampliada
 - **RF11** Medir a relação entre faturamento, nota e prazo de entrega por seller.

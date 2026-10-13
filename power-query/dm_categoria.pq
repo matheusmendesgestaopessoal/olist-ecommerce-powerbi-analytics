@@ -1,24 +1,38 @@
 let
   Origem = stg_products,
-  #"As outras colunas foram removidas" = Table.SelectColumns(Origem, {"product_category_name"}),
-  #"Duplicatas removidas" = Table.Distinct(#"As outras colunas foram removidas", {"product_category_name"}),
-  #"Valor substituído" = Table.ReplaceValue(#"Duplicatas removidas", null, "nao_informado", Replacer.ReplaceValue, {"product_category_name"}),
-  #"Colunas renomeadas" = Table.RenameColumns(#"Valor substituído", {{"product_category_name", "category_key"}}),
-  #"Consultas mescladas" = Table.NestedJoin(#"Colunas renomeadas", {"category_key"}, src_category_translation, {"product_category_name"}, "src_category_translation", JoinKind.LeftOuter),
-  #"Expandido src_category_translation" = Table.ExpandTableColumn(#"Consultas mescladas", "src_category_translation", {"product_category_name_english"}, {"product_category_name_english"}),
-  #"Colunas renomeadas 1" = Table.RenameColumns(#"Expandido src_category_translation", {{"product_category_name_english", "category_name_english"}}),
-  #"Personalização adicionada" = Table.AddColumn(#"Colunas renomeadas 1", "category_display", each if [category_key] = "pc_gamer" then "PC Gamer"
-else if [category_key] = "portateis_cozinha_e_preparadores_de_alimentos" then "Portable Kitchen and Food Preparation Appliances"
-else if [category_key] = "nao_informado" then "Não informado"
-else [category_name_english]),
-  #"Personalização adicionada 1" = Table.AddColumn(#"Personalização adicionada", "ranking_eligible", each if [category_key] = "nao_informado" then false else true),
-  #"Tipo de coluna alterado" = Table.TransformColumnTypes(#"Personalização adicionada 1", {{"ranking_eligible", type logical}}),
-  #"Personalização adicionada 2" = Table.TransformColumnTypes(Table.AddColumn(#"Tipo de coluna alterado", "category_display_pt", each Text.Proper(
-    Text.Replace(
-        [category_key],
-        "_",
-        " "
-    )
-)), {{"category_display_pt", type text}})
+  Chaves = Table.Distinct(Table.TransformColumns(Table.SelectColumns(Origem, {"product_category_name"}),
+      {{"product_category_name", each if _ = null or Text.Trim(_) = "" then "nao_informado" else _, type text}})),
+  Renomeado = Table.RenameColumns(Chaves, {{"product_category_name", "category_key"}}),
+  Ingles = Table.ExpandTableColumn(Table.NestedJoin(Renomeado, {"category_key"}, stg_category_translation, {"product_category_name"}, "t", JoinKind.LeftOuter),
+      "t", {"product_category_name_english"}, {"category_name_english"}),
+  // nomes de exibição em português (o dataset traz só a chave em minúsculas e sem acento)
+  Nomes = [
+      agro_industria_e_comercio = "Agroindústria e comércio", alimentos = "Alimentos", alimentos_bebidas = "Alimentos e bebidas",
+      artes = "Artes", artes_e_artesanato = "Artes e artesanato", artigos_de_festas = "Artigos de festa", artigos_de_natal = "Artigos de Natal",
+      audio = "Áudio", automotivo = "Automotivo", bebes = "Bebês", bebidas = "Bebidas", beleza_saude = "Beleza e saúde",
+      brinquedos = "Brinquedos", cama_mesa_banho = "Cama, mesa e banho", casa_conforto = "Casa e conforto", casa_conforto_2 = "Casa e conforto 2",
+      casa_construcao = "Casa e construção", cds_dvds_musicais = "CDs e DVDs musicais", cine_foto = "Cine e foto", climatizacao = "Climatização",
+      consoles_games = "Consoles e games", construcao_ferramentas_construcao = "Ferramentas de construção",
+      construcao_ferramentas_ferramentas = "Ferramentas", construcao_ferramentas_iluminacao = "Iluminação",
+      construcao_ferramentas_jardim = "Construção e jardim", construcao_ferramentas_seguranca = "Construção e segurança",
+      cool_stuff = "Cool stuff", dvds_blu_ray = "DVDs e Blu-ray", eletrodomesticos = "Eletrodomésticos", eletrodomesticos_2 = "Eletrodomésticos 2",
+      eletronicos = "Eletrônicos", eletroportateis = "Eletroportáteis", esporte_lazer = "Esporte e lazer",
+      fashion_bolsas_e_acessorios = "Bolsas e acessórios", fashion_calcados = "Calçados", fashion_esporte = "Moda esporte",
+      fashion_roupa_feminina = "Roupa feminina", fashion_roupa_infanto_juvenil = "Roupa infantojuvenil", fashion_roupa_masculina = "Roupa masculina",
+      fashion_underwear_e_moda_praia = "Underwear e moda praia", ferramentas_jardim = "Ferramentas de jardim", flores = "Flores",
+      fraldas_higiene = "Fraldas e higiene", industria_comercio_e_negocios = "Indústria, comércio e negócios",
+      informatica_acessorios = "Informática e acessórios", instrumentos_musicais = "Instrumentos musicais", la_cuisine = "La cuisine",
+      livros_importados = "Livros importados", livros_interesse_geral = "Livros de interesse geral", livros_tecnicos = "Livros técnicos",
+      malas_acessorios = "Malas e acessórios", market_place = "Marketplace", moveis_colchao_e_estofado = "Colchões e estofados",
+      moveis_cozinha_area_de_servico_jantar_e_jardim = "Móveis de cozinha e jardim", moveis_decoracao = "Móveis e decoração",
+      moveis_escritorio = "Móveis de escritório", moveis_quarto = "Móveis de quarto", moveis_sala = "Móveis de sala", musica = "Música",
+      papelaria = "Papelaria", pc_gamer = "PC gamer", pcs = "PCs", perfumaria = "Perfumaria", pet_shop = "Pet shop",
+      portateis_casa_forno_e_cafe = "Fornos e cafeteiras", portateis_cozinha_e_preparadores_de_alimentos = "Portáteis de cozinha",
+      relogios_presentes = "Relógios e presentes", seguros_e_servicos = "Seguros e serviços", sinalizacao_e_seguranca = "Sinalização e segurança",
+      tablets_impressao_imagem = "Tablets, impressão e imagem", telefonia = "Telefonia", telefonia_fixa = "Telefonia fixa",
+      utilidades_domesticas = "Utilidades domésticas", nao_informado = "Não informado"],
+  ComNome = Table.AddColumn(Ingles, "categoria", each Record.FieldOrDefault(Nomes, [category_key],
+      Text.Upper(Text.Start([category_key], 1)) & Text.Replace(Text.Middle([category_key], 1), "_", " ")), type text),
+  Elegivel = Table.AddColumn(ComNome, "ranking_eligible", each [category_key] <> "nao_informado", type logical)
 in
-  #"Personalização adicionada 2"
+  Elegivel

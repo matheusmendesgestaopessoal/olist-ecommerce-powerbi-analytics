@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Jornada</title>
+<link rel="stylesheet" href="diagramas.css">
+<style>
+  body{width:1600px;padding-bottom:40px}
+  .fases{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:30px 48px 0}
+  .fase{padding:0;overflow:hidden}
+  .fase .cab{padding:14px 18px;background:var(--c);color:#fff;display:flex;justify-content:space-between;align-items:center}
+  .fase .cab b{font-size:16px}
+  .fase .cab span{font-size:12px;font-weight:700;opacity:.9;letter-spacing:.06em;text-transform:uppercase}
+  .passo{display:grid;grid-template-columns:30px 1fr;gap:12px;padding:14px 18px;border-top:1px solid var(--divisor)}
+  .passo:first-of-type{border-top:0}
+  .passo h4{font-size:15px;font-weight:700}
+  .passo p{font-size:13.5px;line-height:1.45;color:var(--texto);margin:3px 0 7px}
+  .linha{display:flex;align-items:center;gap:10px;padding:22px 48px 0;font-size:14px;color:var(--grafite-2)}
+  .linha i{flex:1;height:2px;background:linear-gradient(90deg,var(--azul-selecao),var(--azul))}
+</style>
+</head>
+<body>
+<div class="topo">
+  <span class="lbl">Método · como eu trabalho</span>
+  <h1>Da pergunta à recomendação, em 4 fases</h1>
+  <p>Com dados reais, a primeira tarefa é desconfiar deles. Antes de qualquer gráfico, auditei a fonte em SQL e transformei cada problema encontrado numa regra escrita. Cada passo deixou uma entrega conferível no repositório.</p>
+</div>
+<div class="linha"><span>Entender</span><i></i><span>Auditar</span><i></i><span>Modelar e construir</span><i></i><span>Analisar e entregar</span></div>
+<div class="fases">
+  <div class="card fase" style="--c:#0F4FD1">
+    <div class="cab"><b>Entender a pergunta</b><span>Fase 1</span></div>
+    <div class="passo"><span class="num">1</span><div><h4>Abertura do projeto</h4><p>Pergunta original (melhores sellers e categorias por ano) e a pergunta ampliada: o que decide a nota?</p><span class="arquivo">docs/01_abertura.md</span></div></div>
+    <div class="passo"><span class="num">2</span><div><h4>Regras de negócio</h4><p>Universo de pedidos entregues, faturamento sem frete, uma nota por pedido, atraso pela data prometida.</p><span class="arquivo">docs/02_regras_de_negocio.md</span></div></div>
+    <div class="passo"><span class="num">3</span><div><h4>Requisitos</h4><p>16 requisitos funcionais e 6 não funcionais (reprodutível, rastreável, seguro, versionável).</p><span class="arquivo">docs/03_requisitos.md</span></div></div>
+  </div>
+  <div class="card fase" style="--c:#1A6BF5">
+    <div class="cab"><b>Carregar e auditar</b><span>Fase 2</span></div>
+    <div class="passo"><span class="num">4</span><div><h4>Camada raw</h4><p>9 CSVs carregados com <code>COPY</code> no PostgreSQL, todas as colunas como texto: a fonte fica intacta.</p><span class="arquivo">codigo/ingestao · sql/01_raw</span></div></div>
+    <div class="passo"><span class="num">5</span><div><h4>Auditoria em SQL</h4><p>12 consultas: pedidos multi-seller, avaliações duplicadas, produtos sem categoria, pagamentos parcelados.</p><span class="arquivo">sql/02_auditoria/</span></div></div>
+    <div class="passo"><span class="num">6</span><div><h4>Achado vira regra</h4><p>Cada problema da auditoria tem uma decisão documentada, aplicada no Power Query.</p><span class="arquivo">docs/02 · seção 6</span></div></div>
+  </div>
+  <div class="card fase" style="--c:#5AB0FF">
+    <div class="cab" style="color:#0B2E66"><b>Modelar e construir</b><span>Fase 3</span></div>
+    <div class="passo"><span class="num">7</span><div><h4>Power Query em camadas</h4><p><code>src_</code> → <code>stg_</code> → <code>ft_</code>/<code>dm_</code>: fato no grão pedido × seller × categoria e 4 dimensões.</p><span class="arquivo">SemanticModel/expressions.tmdl</span></div></div>
+    <div class="passo"><span class="num">8</span><div><h4>DAX e validação</h4><p>Medidas por pedido, nota ajustada e textos dinâmicos, reconciliadas com 7 consultas SQL.</p><span class="arquivo">sql/03_validacao/ · docs/04</span></div></div>
+    <div class="passo"><span class="num">9</span><div><h4>Protótipo e relatório</h4><p>Dashboard aprovado em HTML e gerado como PBIR por script, com drill-through e dica de ferramenta.</p><span class="arquivo">dashboard/</span></div></div>
+  </div>
+  <div class="card fase" style="--c:#111111">
+    <div class="cab"><b>Analisar e entregar</b><span>Fase 4</span></div>
+    <div class="passo"><span class="num">10</span><div><h4>Diagnóstico</h4><p>Números recalculados em Python, correlação de postos e simulação do impacto de reduzir atrasos.</p><span class="arquivo">codigo/analises/diagnostico.py</span></div></div>
+    <div class="passo"><span class="num">11</span><div><h4>Recomendação</h4><p>Cartões de decisão com fato, interpretação, causas, validação, ação, resultado e gatilho.</p><span class="arquivo">docs/05_analise_e_recomendacoes.md</span></div></div>
+    <div class="passo"><span class="num">12</span><div><h4>Revisão crítica</h4><p>Auditoria do próprio projeto: número documentado errado, tabela com nome trocado e modelo refeito.</p><span class="arquivo">docs/06_registro_de_correcoes.md</span></div></div>
+  </div>
+</div>
+</body>
+</html>

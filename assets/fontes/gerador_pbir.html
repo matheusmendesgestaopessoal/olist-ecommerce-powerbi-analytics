@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Relatório como código</title>
+<link rel="stylesheet" href="diagramas.css">
+<style>
+  body{width:1600px;padding-bottom:40px}
+  .corpo{display:grid;grid-template-columns:1fr 1fr;gap:28px;padding:30px 48px 0;align-items:start}
+  .passos{display:flex;flex-direction:column;gap:12px}
+  .p{display:grid;grid-template-columns:34px 1fr;gap:14px;padding:16px 18px}
+  .p h4{font-size:16px;font-weight:700}
+  .p p{font-size:14px;line-height:1.5;color:var(--texto);margin:3px 0 8px}
+  .lado{display:flex;flex-direction:column;gap:12px}
+  .fig{padding:12px;display:flex;flex-direction:column;gap:10px}
+  .fig img{width:100%;border-radius:8px;border:1px solid var(--borda)}
+  .fig .pilula{align-self:flex-start}
+  .mais{text-align:center;font-size:14px;font-weight:600;color:var(--azul-tinta)}
+  .vantagens{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="topo">
+  <span class="lbl">Power BI · relatório como código</span>
+  <h1>Como o dashboard foi construído</h1>
+  <p>As formas e caixas de texto do Power BI não reproduzem um layout desenhado com cuidado. Então o relatório é gerado por um script: o layout vira a imagem de fundo e cada visual é criado, transparente, exatamente onde o protótipo manda.</p>
+</div>
+<div class="corpo">
+  <div class="passos">
+    <div class="card p"><span class="num">1</span><div><h4>Protótipo em HTML e CSS</h4><p>Duas páginas desenhadas com a identidade visual, com os números reais, aprovadas antes de abrir o Power BI.</p><span class="arquivo">dashboard/prototipo/</span></div></div>
+    <div class="card p"><span class="num">2</span><div><h4>Vagas no layout</h4><p>Onde entra um dado, o HTML tem uma vaga vazia com <code>data-v="..."</code>: 64 vagas em 3 páginas.</p><span class="arquivo">gerador_pbir/fundos/*.html</span></div></div>
+    <div class="card p"><span class="num">3</span><div><h4>Chrome sem janela</h4><p>Mede a posição de cada vaga (<code>--dump-dom</code>) e fotografa a página em 2x (<code>--screenshot</code>).</p><span class="arquivo">gerar_paginas.py</span></div></div>
+    <div class="card p"><span class="num">4</span><div><h4>Python escreve o PBIR</h4><p><code>page.json</code> com a imagem de fundo e um <code>visual.json</code> transparente por vaga: cartões, colunas, barras, dispersão, tabelas, filtros e botões.</p><span class="arquivo">Dashboard_Matheus_Mendes.Report/definition/</span></div></div>
+    <div class="card p"><span class="num">5</span><div><h4>Power BI abre o .pbip</h4><p>Números, títulos e cores vêm das medidas DAX; filtros, drill-through e dica de ferramenta funcionam normalmente.</p>
+      <div class="vantagens"><span class="pilula p-azul">fiel ao protótipo</span><span class="pilula p-azul">versionável no Git</span><span class="pilula p-azul">regenera em segundos</span><span class="pilula p-verde">0 erros no JSON Schema</span></div></div></div>
+  </div>
+  <div class="lado">
+    <div class="card fig"><span class="pilula p-amar">Camada 1 · imagem de fundo gerada do HTML</span><img src="_fundo.png"></div>
+    <div class="mais">+ 22 visuais transparentes do Power BI (números, textos, gráficos, botão) =</div>
+    <div class="card fig"><span class="pilula p-verde">Resultado no Power BI Desktop · detalhe do seller</span><img src="_resultado.png"></div>
+  </div>
+</div>
+</body>
+</html>
