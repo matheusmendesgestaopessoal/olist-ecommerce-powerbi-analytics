@@ -211,7 +211,7 @@ O `+ 0` não é enfeite: sem ele, um seller sem nenhum atraso recebia vazio em v
 
 ## ▶ Como executar
 
-**Só ver o dashboard:** baixe o [ZIP do dashboard](https://matheusmendes.site/downloads/olist-dashboard.zip), extraia a pasta, instale o [Power BI Desktop](https://www.microsoft.com/pt-br/power-platform/products/power-bi/desktop) (gratuito) e abra `Dashboard_Matheus_Mendes.pbip`. Os dados vêm junto; não precisa de banco.
+**Só ver o dashboard:** baixe o [ZIP do dashboard](https://matheusmendes.site/downloads/olist-dashboard.zip), extraia a pasta (em Downloads ou Documentos: caminhos muito longos passam do limite do Windows), instale o [Power BI Desktop](https://www.microsoft.com/pt-br/power-platform/products/power-bi/desktop) (gratuito) e abra `Dashboard_Matheus_Mendes.pbip`. Os dados vêm junto; não precisa de banco.
 
 **Rodar o projeto inteiro:**
 
