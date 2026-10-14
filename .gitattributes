@@ -1,0 +1,7 @@
+# Barra de linguagens do GitHub: conta só o código principal do projeto.
+# HTML, CSS e JS aqui são apoio (protótipo, fundos do gerador e imagens do README).
+*.html linguist-detectable=false
+*.css linguist-detectable=false
+*.js linguist-detectable=false
+# O GitHub trata SQL como dado e não o mostra na barra; aqui ele é código.
+*.sql linguist-detectable=true
